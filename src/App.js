@@ -1,4 +1,5 @@
 import './App.css';
+import { Stage, Layer, Rect, Circle }  from 'react-konva';
 
 function App() {
   return (
