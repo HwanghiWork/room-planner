@@ -13,15 +13,6 @@ const Room = (props) => {
     <Stage width={props.width} height={props.height}>
       <Layer>
         <BackgroundImage />
-        <Circle x={200} y={100} radius={50} fill="green"  draggable={true}/>
-        <Rect
-          x={20}
-          y={50}
-          width={100}
-          height={100}
-          fill="red"
-          draggable={true}
-        />
       </Layer>
     </Stage>
   );
