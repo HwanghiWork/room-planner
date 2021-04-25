@@ -24,22 +24,21 @@ const Imagebar = () => {
   const [images, setImages] = React.useState([]);
   return (
     <>
-      <div className="row">
-        {fileList.map((file, i) => {
-          return (
+      <div className="d-flex">
+        {fileList.map((file, i) => 
             <img
-              key={i}
+              key={file.toString()}
               alt={file}
               src={"/images/" + file + ".jpg"}
               width={100}
               height={100}
+              margin={10}
               draggable="true"
               onDragStart={(e) => {
                 dragUrl.current = e.target.src;
               }}
             />
-          );
-        })}
+        )}
       </div>
       <div
         onDrop={(e) => {
@@ -65,8 +64,8 @@ const Imagebar = () => {
           ref={stageRef}
         >
           <Layer>
-            {images.map((image) => {
-              return <URLImage image={image} />;
+            {images.map((image, i) => {
+              return <URLImage key={i} image={image} />;
             })}
           </Layer>
         </Stage>
