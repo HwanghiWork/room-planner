@@ -55,11 +55,11 @@ const App = () => {
       </Navbar>
 
       <Route exact path="/">
-        <Home/>
+        <Home />
       </Route>
 
       <Route path="/login">
-        <Login/>
+        <Login />
       </Route>
 
     </div>
