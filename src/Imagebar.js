@@ -14,6 +14,8 @@ const URLImage = ({ image }) => {
       // I will use offset to set origin to the center of the image
       offsetX={img ? img.width / 2 : 0}
       offsetY={img ? img.height / 2 : 0}
+      onDragEnd={(e) => {
+      }}
     />
   );
 };
@@ -33,7 +35,7 @@ const Imagebar = () => {
               width={100}
               height={100}
               margin={10}
-              draggable="true"
+              draggable
               onDragStart={(e) => {
                 dragUrl.current = e.target.src;
               }}
