@@ -1,7 +1,5 @@
-/* eslint-disable */
-
 import React, { useState } from "react";
-import Room from "./Room.js";
+import Room from "Room";
 
 const App = () => {
   return (
