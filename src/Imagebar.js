@@ -30,7 +30,7 @@ const Imagebar = (props) => {
       }) => (
         <div
           className="d-flex px-1"
-          onClick={onImageUpload}
+          onClick={images.length > 0 ? null : onImageUpload}
           style={{
             border: "1px solid black",
             paddingTop: images.length > 0 ? '0' : '150px',
@@ -45,7 +45,6 @@ const Imagebar = (props) => {
           {imageList.map((image, index) => (
             <div key={index} className="image-item">
               <img
-                key={imageList["data_url"]}
                 src={image["data_url"]}
                 width="150"
                 draggable
