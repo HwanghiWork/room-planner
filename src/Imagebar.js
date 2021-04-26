@@ -1,25 +1,75 @@
 import React from "react";
-
-let fileList = ["room1", "room2"];
+import ImageUploading from "react-images-uploading";
 
 const Imagebar = (props) => {
+  const [images, setImages] = React.useState([]);
+  const maxNumber = 69;
+
+  const onChange = (imageList, addUpdateIndex) => {
+    // data for submit
+    console.log(imageList, addUpdateIndex);
+    setImages(imageList);
+  };
+
   return (
-    <div className="d-flex">
-      {fileList.map((file, i) => (
-        <img
-          key={file.toString()}
-          alt={file}
-          src={"/images/" + file + ".jpg"}
-          width={100}
-          height={100}
-          margin={10}
-          draggable
-          onDragStart={(e) => {
-            props.dragUrl.current = e.target.src;
+    <ImageUploading
+      multiple
+      value={images}
+      onChange={onChange}
+      maxNumber={maxNumber}
+      dataURLKey="data_url"
+    >
+      {({
+        imageList,
+        onImageUpload,
+        onImageRemoveAll,
+        onImageUpdate,
+        onImageRemove,
+        isDragging,
+        dragProps,
+      }) => (
+        <div
+          className="d-flex px-1"
+          onClick={onImageUpload}
+          style={{
+            border: "1px solid black",
+            paddingTop: images.length > 0 ? '0' : '150px',
+            backgroundImage: images.length > 0 ? null : `url("/images/empty.png")`,
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
+            backgroundSize: 'fit',
+            opacity: images.length > 0 ? '1.0' : '0.6' 
           }}
-        />
-      ))}
-    </div>
+          {...dragProps}
+        >
+          {imageList.map((image, index) => (
+            <div key={index} className="image-item">
+              <img
+                key={imageList["data_url"]}
+                src={image["data_url"]}
+                width="150"
+                draggable
+                onDragStart={(e) => {
+                  props.dragUrl.current = e.target.src;
+                }}
+              />
+              <div className="image-item__btn-wrapper">
+                <button
+                  onClick={() => onImageUpdate(index)}
+                >
+                  Update
+                </button>
+                <button
+                  onClick={() => onImageRemove(index)}
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </ImageUploading>
   );
 };
 
