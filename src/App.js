@@ -30,8 +30,8 @@ const App = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
-            <Nav.Link> <Link to="/"> Home </Link></Nav.Link>
-            <Nav.Link> <Link to="/login"> Login </Link></Nav.Link>
+            <Nav.Link as={Link} to="/"> Home </Nav.Link>
+            <Nav.Link as={Link} to="/login"> Login </Nav.Link>
             <NavDropdown
               title="Dropdown"
               id="basic-nav-dropdown"

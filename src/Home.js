@@ -71,7 +71,7 @@ function Home() {
               <Button variant="secondary">추가</Button>{" "}
             </p>
           </div>
-          <div className="col-7 d-flex flex-column ">
+          <div className="col-7 d-flex flex-column " className="도면">
             <Room
               className="text-center"
               width={730}
@@ -83,7 +83,7 @@ function Home() {
               <Button variant="primary">Interior</Button>
             </p>
           </div>
-          <div className="col-2">
+          <div className="col-2" className="가구추천">
             <h4>가구 추천</h4>
 
             <div className="row">
@@ -103,15 +103,16 @@ function Home() {
 
 function Furniture(props, i) {
   return (
-    <div>
-      <img
+    <div className="가구">
+      <img className="가구추천이미지"
         src={process.env.PUBLIC_URL + "침대" + (props.i + 1) + ".jpg"}
         alt="copy url"
         width="100%"
       />
-      <p> {props.가구.title} </p>
-      <p> {props.가구.content} </p>
-      <p> {props.가구.price} </p>
+      <p className="가구추천텍스트"> {props.가구.title} </p>
+      <p className="가구추천텍스트"> {props.가구.content} </p>
+      <p className="가구추천텍스트"> {props.가구.price} </p>
+      <Button variant="secondary">추가</Button>
     </div>
   );
 };
