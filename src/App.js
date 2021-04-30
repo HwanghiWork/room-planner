@@ -36,7 +36,7 @@ const App = () => {
               title="Dropdown"
               id="basic-nav-dropdown"
             >
-              <NavDropdown.Item href="#action/3.1">
+              <NavDropdown.Item>
                 Action
               </NavDropdown.Item>
               <NavDropdown.Item href="#action/3.2">
