@@ -33,6 +33,7 @@ function Home() {
         <div className="row d-flex align-items-start">
           <div className="col-2" className="사용자도형">
             <h5>사용자 설정</h5>
+            <hr />
             <img
               src={process.env.PUBLIC_URL + "square.jpg"}
               alt="copy url"
@@ -46,7 +47,6 @@ function Home() {
                 placeholder="가로(mm)"
                 onChange={(e) => { 사각형가로변경(e.target.value) }}
               />
-              {사각형가로 /*지우기*/}
             </div>
             <div className="input-group mb-3">
               <input
@@ -55,7 +55,6 @@ function Home() {
                 placeholder="세로(mm)"
                 onChange={(e) => { 사각형세로변경(e.target.value) }}
               />
-              {사각형세로 /*지우기*/}
             </div>
             <p>
               <Button variant="info" onClick={() => {
@@ -76,7 +75,6 @@ function Home() {
                 placeholder="가로(mm)"
                 onChange={(e) => { 삼각형가로변경(e.target.value) }}
               />
-              {삼각형가로 /*지우기*/}
             </div>
             <div className="input-group mb-3">
               <input
@@ -85,7 +83,6 @@ function Home() {
                 placeholder="세로(mm)"
                 onChange={(e) => { 삼각형세로변경(e.target.value) }}
               />
-              {삼각형세로 /*지우기*/}
             </div>
             <p>
               <Button variant="info" onClick={() => {
@@ -108,6 +105,7 @@ function Home() {
           </div>
           <div className="col-2" className="가구추천">
             <h4>가구 추천</h4>
+            <hr />
             <div className="row" className="가구추천스크롤">
               {가구.map((a, i) => {
                 return (
