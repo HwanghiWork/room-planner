@@ -58,8 +58,10 @@ function Home() {
               {사각형세로 /*지우기*/}
             </div>
             <p>
-              {" "}
-              <Button variant="info">추가</Button>{" "}
+              <Button variant="info" onClick={() => {
+                console.log(사각형가로);
+                console.log(사각형세로);
+              }}>추가</Button>
             </p>
             <img
               src={process.env.PUBLIC_URL + "triangle.jpg"}
@@ -86,8 +88,10 @@ function Home() {
               {삼각형세로 /*지우기*/}
             </div>
             <p>
-              {" "}
-              <Button variant="info">추가</Button>{" "}
+              <Button variant="info" onClick={() => {
+                console.log(삼각형가로);
+                console.log(삼각형세로);
+              }}>추가</Button>
             </p>
           </div>
           <div className="col-7 d-flex flex-column " className="도면">
@@ -115,7 +119,11 @@ function Home() {
                 );
               })}
             </div>
-            <Button variant="info" className="가구추천추가">추가</Button>
+            <Button variant="info" className="가구추천추가" onClick={() => {
+              console.log(가구가로);
+              console.log(가구세로);
+            }
+            }>추가</Button>
           </div>
         </div>
       </div>
