@@ -2,7 +2,9 @@ import React from "react";
 import ImageUploading from "react-images-uploading";
 
 const Imagebar = (props) => {
-  const [images, setImages] = React.useState([]);
+  const [images, setImages] = React.useState(
+    JSON.parse(localStorage.getItem('backgroundImages')) || []
+  );
   const maxNumber = 69;
 
   const onChange = (imageList, addUpdateIndex) => {
@@ -11,8 +13,7 @@ const Imagebar = (props) => {
   };
 
   React.useEffect(() => {
-    localStorage.setItem("backgroundImages", images);
-    console.log(localStorage.getItem('backgroundImages'));
+    localStorage.setItem("backgroundImages", JSON.stringify(images));
   }, [images]);
 
   return (
