@@ -7,9 +7,13 @@ const Imagebar = (props) => {
 
   const onChange = (imageList, addUpdateIndex) => {
     // data for submit
-    console.log(imageList, addUpdateIndex);
     setImages(imageList);
   };
+
+  React.useEffect(() => {
+    localStorage.setItem("backgroundImages", images);
+    console.log(localStorage.getItem('backgroundImages'));
+  }, [images]);
 
   return (
     <ImageUploading
@@ -30,7 +34,7 @@ const Imagebar = (props) => {
       }) => (
         <div
           className="d-flex px-1"
-          onClick={images.length > 0 ? null : onImageUpload}
+          onClick={onImageUpload}
           style={{
             border: "1px solid black",
             paddingTop: images.length > 0 ? '0' : '150px',
@@ -54,12 +58,18 @@ const Imagebar = (props) => {
               />
               <div className="image-item__btn-wrapper">
                 <button
-                  onClick={() => onImageUpdate(index)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onImageUpdate(index);
+                  }}
                 >
                   Update
                 </button>
                 <button
-                  onClick={() => onImageRemove(index)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onImageRemove(index)
+                  }}
                 >
                   Remove
                 </button>
