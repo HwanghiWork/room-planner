@@ -3,7 +3,7 @@ import ImageUploading from "react-images-uploading";
 
 const Imagebar = (props) => {
   const [images, setImages] = React.useState(
-    JSON.parse(localStorage.getItem('backgroundImages')) || []
+    JSON.parse(localStorage.getItem('barImages')) || []
   );
   const maxNumber = 69;
 
@@ -13,7 +13,7 @@ const Imagebar = (props) => {
   };
 
   React.useEffect(() => {
-    localStorage.setItem("backgroundImages", JSON.stringify(images));
+    localStorage.setItem("barImages", JSON.stringify(images));
   }, [images]);
 
   return (
