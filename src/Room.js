@@ -1,11 +1,24 @@
 import React, { useState, useRef, useEffect } from "react";
 import Imagebar from "Imagebar";
-import { Stage, Layer, Image, Transformer } from "react-konva";
+import {
+  Stage,
+  Layer,
+  Image,
+  Transformer,
+} from "react-konva";
 import useImage from "use-image";
 
-const URLImage = ({ image, index, isSelected, onSelect, onChange}) => {
+const URLImage = ({
+  image,
+  index,
+  isSelected,
+  onSelect,
+  onChange,
+  canvasImages,
+  setCanvasImages
+}) => {
   const [img] = useImage(image.src);
-  const [imgLoc, setImgLoc] = useState({x:0, y:0});
+  const [imgLoc, setImgLoc] = useState({ x: 0, y: 0 });
   const imgRef = useRef();
   const trRef = useRef();
 
@@ -17,64 +30,56 @@ const URLImage = ({ image, index, isSelected, onSelect, onChange}) => {
     }
   }, [isSelected]);
 
-  useEffect(() => {
-    // Update canvas
-    let canvasImages = JSON.parse(
-      localStorage.getItem("canvasImages")
-    );
-    if(canvasImages) {
-      let change = canvasImages[index];
-      change.x = imgLoc.x;
-      change.y = imgLoc.y;
-      localStorage.setItem(
-        "canvasImages",
-        JSON.stringify(canvasImages)
-      );
-    }
-    
-  });
-
   return (
     <React.Fragment>
       <Image
-      onClick={onSelect}
-      onTap={onSelect}
-      ref={imgRef}
-      image={img}
-      x={image.x}
-      y={image.y}
-      draggable
-      // I will use offset to set origin to the center of the image
-      offsetX={img ? img.width / 2 : 0}
-      offsetY={img ? img.height / 2 : 0}
-      onDragEnd={(e) => {
-        const {
-          attrs: { x, y },
-        } = e.target;
-        setImgLoc({x, y});
-      }}
-      onTransformEnd={(e) => {
-        // transformer is changing scale of the node
-        // and NOT its width or height
-        // but in the store we have only width and height
-        // to match the data better we will reset scale on transform end
-        const node = imgRef.current;
-        const scaleX = node.scaleX();
-        const scaleY = node.scaleY();
+        onClick={onSelect}
+        onTap={onSelect}
+        ref={imgRef}
+        image={img}
+        x={image.x}
+        y={image.y}
+        draggable
+        // I will use offset to set origin to the center of the image
+        offsetX={img ? img.width / 2 : 0}
+        offsetY={img ? img.height / 2 : 0}
+        onDragEnd={(e) => {
+          const {
+            attrs: { x, y },
+          } = e.target;
+          //setImgLoc({x, y});
+          if (canvasImages) {
+            canvasImages[index].x = x;
+            canvasImages[index].y = y;
+            setCanvasImages(canvasImages);
+            localStorage.setItem(
+              "canvasImages",
+              JSON.stringify(canvasImages)
+            );
+          }
+        }}
+        onTransformEnd={(e) => {
+          // transformer is changing scale of the node
+          // and NOT its width or height
+          // but in the store we have only width and height
+          // to match the data better we will reset scale on transform end
+          const node = imgRef.current;
+          const scaleX = node.scaleX();
+          const scaleY = node.scaleY();
 
-        // we will reset it back
-        node.scaleX(1);
-        node.scaleY(1);
-        onChange({
-          img,
-          x: node.x(),
-          y: node.y(),
-          // set minimal value
-          width: Math.max(5, node.width() * scaleX),
-          height: Math.max(node.height() * scaleY),
-        });
-      }}
-    />
+          // we will reset it back
+          node.scaleX(1);
+          node.scaleY(1);
+          onChange({
+            img,
+            x: node.x(),
+            y: node.y(),
+            // set minimal value
+            width: Math.max(5, node.width() * scaleX),
+            height: Math.max(node.height() * scaleY),
+          });
+        }}
+      />
       {isSelected && (
         <Transformer
           ref={trRef}
@@ -88,7 +93,6 @@ const URLImage = ({ image, index, isSelected, onSelect, onChange}) => {
         />
       )}
     </React.Fragment>
-    
   );
 };
 
@@ -99,13 +103,15 @@ const Room = () => {
     JSON.parse(localStorage.getItem("canvasImages")) || []
   );
   const [selectedId, selectShape] = useState(null);
-  
-  // Event Listener
+
+  // button click event listener
   function clearBoard(e) {
-    const { target:{id} } = e;
+    const {
+      target: { id },
+    } = e;
     localStorage.removeItem(id);
     window.location.reload();
-  };
+  }
 
   const checkDeselect = (e) => {
     // deselect when clicked on empty area
@@ -120,12 +126,14 @@ const Room = () => {
       "canvasImages",
       JSON.stringify(canvasImages)
     );
-  },[canvasImages]);
+  });
 
   return (
     <>
       <div id={"buttons-wrapper"}>
-        <button id="canvasImages" onClick={clearBoard}>Clear</button>
+        <button id="canvasImages" onClick={clearBoard}>
+          Clear
+        </button>
       </div>
       <Imagebar dragUrl={dragUrl} />
       <div
@@ -156,7 +164,13 @@ const Room = () => {
           <Layer>
             {canvasImages.map((image, i) => {
               return (
-                <URLImage key={i} image={image} index={i} />
+                <URLImage
+                  key={i}
+                  image={image}
+                  index={i}
+                  canvasImages={canvasImages}
+                  setCanvasImages={setCanvasImages}
+                />
               );
             })}
           </Layer>
