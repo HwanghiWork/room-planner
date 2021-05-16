@@ -51,7 +51,7 @@ const URLImage = ({ image, index, isSelected, onSelect, onChange}) => {
         const {
           attrs: { x, y },
         } = e.target;
-        setImgLoc({x:x, y:y});
+        setImgLoc({x, y});
       }}
       onTransformEnd={(e) => {
         // transformer is changing scale of the node
@@ -104,6 +104,7 @@ const Room = () => {
   function clearBoard(e) {
     const { target:{id} } = e;
     localStorage.removeItem(id);
+    window.location.reload();
   };
 
   const checkDeselect = (e) => {
