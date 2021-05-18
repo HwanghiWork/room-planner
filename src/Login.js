@@ -10,6 +10,10 @@ import {
   Text,
   FormControl
 } from "react-bootstrap";
+import { Link, Route, Switch } from 'react-router-dom';
+
+import Signin from "./Signin";
+
 
 function Login() {
 
@@ -35,7 +39,9 @@ function Login() {
       </InputGroup>
 
       <Button variant="info"> 로그인 </Button>
-      <Button variant="info" className="왼쪽마진"> 회원가입 </Button>
+      <Button variant="info" className="왼쪽마진" onClick={() => {
+        window.location.href = "/signin"
+      }}> 회원가입 </Button>
     </div>
   )
 }

@@ -15,6 +15,8 @@ import { Link, Route, Switch } from 'react-router-dom';
 
 import Home from "./Home.js";
 import Login from "./Login.js";
+import Signin from "./Signin.js";
+import List from "./List.js";
 
 const App = () => {
   return (
@@ -36,7 +38,7 @@ const App = () => {
               title="Dropdown"
               id="basic-nav-dropdown"
             >
-              <NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/scroll">
                 Action
               </NavDropdown.Item>
               <NavDropdown.Item href="#action/3.2">
@@ -53,15 +55,23 @@ const App = () => {
           </Nav>
         </Navbar.Collapse>
       </Navbar>
+      <Switch>
+        <Route exact path="/">
+          <Home />
+        </Route>
 
-      <Route exact path="/">
-        <Home />
-      </Route>
+        <Route path="/login">
+          <Login />
+        </Route>
 
-      <Route path="/login">
-        <Login />
-      </Route>
+        <Route path="/signin">
+          <Signin />
+        </Route>
 
+        <Route path="/scroll">
+          <List />
+        </Route>
+      </Switch>
     </div>
   );
 };
