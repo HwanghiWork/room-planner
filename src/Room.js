@@ -6,6 +6,10 @@ import {
   Image,
   Transformer,
 } from "react-konva";
+import {
+  Button,
+  ButtonGroup,
+} from "react-bootstrap";
 import useImage from "use-image";
 
 const URLImage = ({
@@ -17,8 +21,8 @@ const URLImage = ({
   canvasImages,
 }) => {
   const [img] = useImage(image.src);
-  if(canvasImages[index].width > 0 && img) {
-    img.width  = canvasImages[index].width;
+  if (canvasImages[index].width > 0 && img) {
+    img.width = canvasImages[index].width;
     img.height = canvasImages[index].height;
   }
   const imgRef = useRef();
@@ -99,7 +103,7 @@ const Room = (props) => {
   );
   const [selectedId, selectShape] = useState(null);
   // this is a tricky way for calling useEffect
-  const [cnt, setCount] = useState(0); 
+  const [cnt, setCount] = useState(0);
 
   // button click event listener
   function clearBoard(e) {
@@ -128,11 +132,6 @@ const Room = (props) => {
 
   return (
     <>
-      <div id={"buttons-wrapper"}>
-        <button id="canvasImages" onClick={clearBoard}>
-          Clear
-        </button>
-      </div>
       <Imagebar dragUrl={dragUrl} />
       <div
         onDrop={(e) => {
@@ -145,8 +144,8 @@ const Room = (props) => {
               {
                 ...stageRef.current.getPointerPosition(),
                 src: dragUrl.current,
-                width:0,
-                height:0
+                width: 0,
+                height: 0,
               },
             ])
           );
@@ -191,6 +190,11 @@ const Room = (props) => {
             })}
           </Layer>
         </Stage>
+        <div id="buttons-wrapper" className={"pt-3"}>
+          <Button id="canvasImages" onClick={clearBoard}>
+            Clear
+          </Button>
+        </div>
       </div>
     </>
   );
