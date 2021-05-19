@@ -12,10 +12,6 @@
   flex: 1;
 }
 
-.도면 {
-  align-items: center;
-  flex: 5;
-}
 
 .가구추천 {
   align-items: right;
@@ -64,10 +60,4 @@
 
 .가구 {
   margin-bottom: 10px;
-}
-
-.canvas {
-  width: 100%;
-  height: 100%;
-  text-align: center;
 }

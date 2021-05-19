@@ -1,22 +1,19 @@
 /* eslint-disable */
 
-import React, { useState } from "react";
+import React from 'react';
 import "./App.css";
 import {
   Navbar,
   Nav,
-  NavDropdown,
-  Button,
-  Jumbotron,
+  NavDropdown
 } from "react-bootstrap";
 import Data from "./data.js";
-import Room from "./Room.js";
 import { Link, Route, Switch } from 'react-router-dom';
 
-import Home from "./Home.js";
-import Login from "./Login.js";
-import Signin from "./Signin.js";
-import List from "./List.js";
+import Home from "Home.js";
+import Login from "Login.js";
+import Signin from "Signin.js";
+import List from "List.js";
 
 const App = () => {
   return (
@@ -59,15 +56,12 @@ const App = () => {
         <Route exact path="/">
           <Home />
         </Route>
-
         <Route path="/login">
           <Login />
         </Route>
-
         <Route path="/signin">
           <Signin />
         </Route>
-
         <Route path="/scroll">
           <List />
         </Route>
