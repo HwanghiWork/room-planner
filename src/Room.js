@@ -15,10 +15,12 @@ const URLImage = ({
   onSelect,
   onChange,
   canvasImages,
-  setCanvasImages
 }) => {
   const [img] = useImage(image.src);
-  const [imgLoc, setImgLoc] = useState({ x: 0, y: 0 });
+  if(canvasImages[index].width > 0 && img) {
+    img.width  = canvasImages[index].width;
+    img.height = canvasImages[index].height;
+  }
   const imgRef = useRef();
   const trRef = useRef();
 
@@ -47,16 +49,12 @@ const URLImage = ({
           const {
             attrs: { x, y },
           } = e.target;
-          //setImgLoc({x, y});
-          if (canvasImages) {
-            canvasImages[index].x = x;
-            canvasImages[index].y = y;
-            setCanvasImages(canvasImages);
-            localStorage.setItem(
-              "canvasImages",
-              JSON.stringify(canvasImages)
-            );
-          }
+          onChange(e, {
+            x: x,
+            y: y,
+            width: img.width,
+            height: img.height,
+          });
         }}
         onTransformEnd={(e) => {
           // transformer is changing scale of the node
@@ -66,18 +64,15 @@ const URLImage = ({
           const node = imgRef.current;
           const scaleX = node.scaleX();
           const scaleY = node.scaleY();
-
+          onChange(e, {
+            x: node.x(),
+            y: node.y(),
+            width: Math.max(5, node.width() * scaleX),
+            height: Math.max(5, node.width() * scaleY),
+          });
           // we will reset it back
           node.scaleX(1);
           node.scaleY(1);
-          onChange({
-            img,
-            x: node.x(),
-            y: node.y(),
-            // set minimal value
-            width: Math.max(5, node.width() * scaleX),
-            height: Math.max(node.height() * scaleY),
-          });
         }}
       />
       {isSelected && (
@@ -103,6 +98,8 @@ const Room = () => {
     JSON.parse(localStorage.getItem("canvasImages")) || []
   );
   const [selectedId, selectShape] = useState(null);
+  // this is a tricky way for calling useEffect
+  const [cnt, setCount] = useState(0); 
 
   // button click event listener
   function clearBoard(e) {
@@ -118,6 +115,7 @@ const Room = () => {
     const clickedOnEmpty = e.target === e.target.getStage();
     if (clickedOnEmpty) {
       selectShape(null);
+      setCount(0);
     }
   };
 
@@ -126,7 +124,7 @@ const Room = () => {
       "canvasImages",
       JSON.stringify(canvasImages)
     );
-  });
+  }, [canvasImages]);
 
   return (
     <>
@@ -147,6 +145,8 @@ const Room = () => {
               {
                 ...stageRef.current.getPointerPosition(),
                 src: dragUrl.current,
+                width:0,
+                height:0
               },
             ])
           );
@@ -168,8 +168,24 @@ const Room = () => {
                   key={i}
                   image={image}
                   index={i}
+                  isSelected={i === selectedId}
+                  onSelect={() => {
+                    selectShape(i);
+                  }}
+                  onChange={(e, params) => {
+                    const { x, y, width, height } = params;
+                    canvasImages[i].x = x;
+                    canvasImages[i].y = y;
+                    canvasImages[i].width = width;
+                    canvasImages[i].height = height;
+                    setCanvasImages(canvasImages);
+                    localStorage.setItem(
+                      "canvasImages",
+                      JSON.stringify(canvasImages)
+                    );
+                    setCount(cnt + 1);
+                  }}
                   canvasImages={canvasImages}
-                  setCanvasImages={setCanvasImages}
                 />
               );
             })}
