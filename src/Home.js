@@ -34,7 +34,7 @@ const Home = () => {
   let [checked, setChecked] = useState(false);
 
   return (
-    <div className="container-fluid m-3">
+    <div className="container-fluid px-5">
       <div className="row d-flex">
         <div className="col-8 " className="도면" >
           <Room width={width / 1.5} height={height / 1.5} />
