@@ -28,7 +28,7 @@ const Home = () => {
   let [가구가로, 가구가로변경] = useState();
   let [가구세로, 가구세로변경] = useState();
   const [width, height] = useWindowSize();
-  function changeSidebar () {
+  function changeSidebar() {
     console.log("change!");
   }
   let [checked, setChecked] = useState(false);
@@ -37,8 +37,9 @@ const Home = () => {
     <div className="container-fluid m-3">
       <div className="row d-flex">
         <div className="col-8 " className="도면" >
-          <Room width={width/1.5} height={height/1.5}/>
+          <Room width={width / 1.5} height={height / 1.5} />
         </div>
+
         <div className="col-4" className="가구추천" onChange={changeSidebar}>
           <h4>가구 추천</h4>
           <hr />
