@@ -5,6 +5,7 @@ import {
   Layer,
   Image,
   Transformer,
+  Rect,
 } from "react-konva";
 import useImage from "use-image";
 
@@ -17,8 +18,8 @@ const URLImage = ({
   canvasImages,
 }) => {
   const [img] = useImage(image.src);
-  if(canvasImages[index].width > 0 && img) {
-    img.width  = canvasImages[index].width;
+  if (canvasImages[index].width > 0 && img) {
+    img.width = canvasImages[index].width;
     img.height = canvasImages[index].height;
   }
   const imgRef = useRef();
@@ -97,11 +98,26 @@ const Room = () => {
   const [canvasImages, setCanvasImages] = useState(
     JSON.parse(localStorage.getItem("canvasImages")) || []
   );
+  const [rects, setRects] = useState([]);
+  const [rect, setRect] = useState({});
   const [selectedId, selectShape] = useState(null);
   // this is a tricky way for calling useEffect
-  const [cnt, setCount] = useState(0); 
+  const [cnt, setCount] = useState(0);
 
-  // button click event listener
+  // Add event listener
+  function createRect(e) {
+    e.preventDefault();
+    let tmp = rect;
+    tmp[e.target.name] = e.target.value;
+    setRect(tmp);
+  }
+  function addRect(e) {
+    e.preventDefault();
+    if (canvasImages) {
+      const setRect = {...rect};
+      setRects(rects.concat([setRect]));
+    }
+  }
   function clearBoard(e) {
     const {
       target: { id },
@@ -130,8 +146,23 @@ const Room = () => {
     <>
       <div id={"buttons-wrapper"}>
         <button id="canvasImages" onClick={clearBoard}>
-          Clear
+          Clear Image
         </button>
+        <form onSubmit={addRect}>
+          width:
+          <input
+            name="width"
+            type="text"
+            onChange={createRect}
+          />
+          height:
+          <input
+            name="height"
+            type="text"
+            onChange={createRect}
+          />
+          <input type="submit" value="Submit" />
+        </form>
       </div>
       <Imagebar dragUrl={dragUrl} />
       <div
@@ -145,8 +176,8 @@ const Room = () => {
               {
                 ...stageRef.current.getPointerPosition(),
                 src: dragUrl.current,
-                width:0,
-                height:0
+                width: 0,
+                height: 0,
               },
             ])
           );
@@ -189,6 +220,19 @@ const Room = () => {
                 />
               );
             })}
+            {rects ? rects.map((rect, i) => {
+              return (
+                <Rect
+                  key={"rect" + i}
+                  x={window.innerWidth/2}
+                  y={window.innerHeight/2}
+                  width={parseInt(rect.width)}
+                  height={parseInt(rect.height)}
+                  fill="red"
+                  draggable
+                />
+              );
+            }) : <Rect width={0} height={0}/>}
           </Layer>
         </Stage>
       </div>
