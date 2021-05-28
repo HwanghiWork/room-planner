@@ -34,11 +34,12 @@ const URLImage = ({
   }, [isSelected]);
 
   const togglePin = () => {
-    if(!pin) // pin is activated
+    if (!pin)
+      // pin is activated
       offSelect();
     setPin(!pin);
   };
-  
+
   // set size of LocalStorage
   if (rooms[index].width > 0 && roomImg) {
     roomImg.width = rooms[index].width;
@@ -127,7 +128,16 @@ const Room = () => {
   const [rects, setRects] = useState(
     JSON.parse(localStorage.getItem("funitures")) || []
   );
-  const [rect, setRect] = useState({ x: 0, y: 0, group: 0 });
+  const [rect, setRect] = useState({
+    id: 0,
+    x: 0,
+    y: 0,
+    offsetX: 0,
+    offsetY: 0,
+    width: 0,
+    height: 0,
+    group: 0,
+  });
   const [selectedId, selectShape] = useState(null);
   // this is a trigger for modal
   const [show, setShow] = useState(false);
@@ -136,8 +146,7 @@ const Room = () => {
   const [size, setSize] = useState(
     rulerSize ? rulerSize : "0"
   );
-  
-  
+
   let colorIndex = 0;
   const rainbow = [
     "red",
@@ -150,6 +159,24 @@ const Room = () => {
   ];
 
   // Add event listener
+  function moveRoom(e, params) {
+    const { x, y, width, height } = params;
+    rooms[currentRoom].x = x;
+    rooms[currentRoom].y = y;
+    rooms[currentRoom].width = width;
+    rooms[currentRoom].height = height;
+    setrooms(rooms);
+    // Move rects together
+    for(let i=0; i < rects.length; i++) {
+      if(rects[i].group === currentRoom) {
+        rects[i].x = x;
+        rects[i].y = y;
+      }
+    }
+    setRects(rects.concat([]));
+    localStorage.setItem("rooms", JSON.stringify(rooms));
+  }
+
   function createRect(e) {
     e.preventDefault();
     let tmp = rect;
@@ -163,16 +190,15 @@ const Room = () => {
       rect.x = rooms[currentRoom].x;
       rect.y = rooms[currentRoom].y;
       rect.group = currentRoom;
+      rect.id = rects.length;
       setRects(rects.concat([{ ...rect }]));
     }
   }
 
-  function moveRect(e) {
-    
-    const i = e.target.index - 2;
-    const {x, y} = e.target.attrs;
-    rects[i].x = x;
-    rects[i].y = y;
+  function moveRect(e, i) {
+    const { x, y } = e.target.attrs;
+    rects[i].offsetX = x - rects[i].x;
+    rects[i].offsetY = y - rects[i].y;
     setRects(rects.concat([]));
   }
 
@@ -195,11 +221,8 @@ const Room = () => {
   useEffect(() => {
     if (didMount.current) {
       setShow(true);
-      setCurrentRoom(rooms.length-1);
-      localStorage.setItem(
-        "rooms",
-        JSON.stringify(rooms)
-      );
+      setCurrentRoom(rooms.length - 1);
+      localStorage.setItem("rooms", JSON.stringify(rooms));
     } else {
       didMount.current = true;
     }
@@ -210,9 +233,8 @@ const Room = () => {
   }, [size]);
 
   useEffect(() => {
-    console.log(JSON.stringify(rects))
     localStorage.setItem(
-      "funitures", 
+      "funitures",
       JSON.stringify(rects)
     );
   }, [rects]);
@@ -264,7 +286,6 @@ const Room = () => {
               },
             ])
           );
-          
         }}
         onDragOver={(e) => e.preventDefault()}
       >
@@ -292,38 +313,29 @@ const Room = () => {
                     selectShape(null);
                   }}
                   onChange={(e, params) => {
-                    const { x, y, width, height } = params;
-                    rooms[i].x = x;
-                    rooms[i].y = y;
-                    rooms[i].width = width;
-                    rooms[i].height = height;
-                    setrooms(rooms);
-                    localStorage.setItem(
-                      "rooms",
-                      JSON.stringify(rooms)
-                    );
+                    moveRoom(e, params);
                   }}
                   rooms={rooms}
                 />
               );
             })}
             {rects.map((rect, i) => {
-                return (
-                  <Rect
-                    key={"rect" + i}
-                    x={rect.x}
-                    y={rect.y}
-                    width={parseInt(rect.width)}
-                    height={parseInt(rect.height)}
-                    opacity={0.6}
-                    fill={rainbow[colorIndex++ % 7]}
-                    draggable
-                    onDragEnd={moveRect}
-                  />
-                );
+              return (
+                <Rect
+                  key={"rect" + i}
+                  x={rect.x + rect.offsetX}
+                  y={rect.y + rect.offsetY}
+                  width={parseInt(rect.width)}
+                  height={parseInt(rect.height)}
+                  opacity={0.6}
+                  fill={rainbow[colorIndex++ % 7]}
+                  draggable
+                  onDragEnd={(e) => moveRect(e, rect.id)}
+                />
+              );
             })}
             <Rect
-              x={ (window.innerWidth - parseInt(rulerSize)) / 2 }
+              x={(window.innerWidth - parseInt(rulerSize))/2}
               y={50}
               width={parseInt(rulerSize)}
               height={8}
