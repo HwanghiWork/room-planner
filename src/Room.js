@@ -8,44 +8,55 @@ import {
   Rect,
 } from "react-konva";
 import useImage from "use-image";
+import RoomSize from "RoomSize";
 
 const URLImage = ({
   image,
   index,
   isSelected,
   onSelect,
+  offSelect,
   onChange,
   canvasImages,
 }) => {
-  const [img] = useImage(image.src);
-  if (canvasImages[index].width > 0 && img) {
-    img.width = canvasImages[index].width;
-    img.height = canvasImages[index].height;
-  }
+  const [roomImg] = useImage(image.src);
+  const [pinImg] = useImage("images/pin.png");
+  const [pin, setPin] = useState(false);
   const imgRef = useRef();
   const trRef = useRef();
 
   useEffect(() => {
-    if (isSelected) {
+    if (!pin && isSelected) {
       // we need to attach transformer manually
       trRef.current.nodes([imgRef.current]);
       trRef.current.getLayer().batchDraw();
     }
   }, [isSelected]);
 
+  const togglePin = () => {
+    if(!pin) // pin is activated
+      offSelect();
+    setPin(!pin);
+  };
+  
+  // set size of LocalStorage
+  if (canvasImages[index].width > 0 && roomImg) {
+    roomImg.width = canvasImages[index].width;
+    roomImg.height = canvasImages[index].height;
+  }
   return (
     <React.Fragment>
       <Image
         onClick={onSelect}
         onTap={onSelect}
         ref={imgRef}
-        image={img}
+        image={roomImg}
         x={image.x}
         y={image.y}
-        draggable
+        draggable={!pin}
         // I will use offset to set origin to the center of the image
-        offsetX={img ? img.width / 2 : 0}
-        offsetY={img ? img.height / 2 : 0}
+        offsetX={roomImg ? roomImg.width / 2 : 0}
+        offsetY={roomImg ? roomImg.height / 2 : 0}
         onDragEnd={(e) => {
           const {
             attrs: { x, y },
@@ -53,8 +64,8 @@ const URLImage = ({
           onChange(e, {
             x: x,
             y: y,
-            width: img.width,
-            height: img.height,
+            width: roomImg.width,
+            height: roomImg.height,
           });
         }}
         onTransformEnd={(e) => {
@@ -88,6 +99,17 @@ const URLImage = ({
           }}
         />
       )}
+      <Image
+        onClick={togglePin}
+        onTap={togglePin}
+        image={pinImg}
+        x={image.x}
+        y={image.y}
+        // offset to set origin to the corner of the image
+        offsetX={roomImg ? -roomImg.width / 2 : 0}
+        offsetY={pinImg ? pinImg.height : 0}
+        opacity={pin ? 1 : 0.5}
+      />
     </React.Fragment>
   );
 };
@@ -95,14 +117,37 @@ const URLImage = ({
 const Room = () => {
   const dragUrl = useRef();
   const stageRef = useRef();
+  const didMount = useRef(false);
+  /* Canvas Image Part */
   const [canvasImages, setCanvasImages] = useState(
     JSON.parse(localStorage.getItem("canvasImages")) || []
   );
+  // Select a image when location changed
+  let currentImage = 0;
+
   const [rects, setRects] = useState([]);
-  const [rect, setRect] = useState({});
+  const [rect, setRect] = useState({ x: 0, y: 0 });
   const [selectedId, selectShape] = useState(null);
   // this is a tricky way for calling useEffect
   const [cnt, setCount] = useState(0);
+  // this is a trigger for modal
+  const [show, setShow] = useState(false);
+  // this is a ruler for setting room size
+  const rulerSize = localStorage.getItem("rulerSize");
+  const [size, setSize] = useState(
+    rulerSize ? rulerSize : "0"
+  );
+
+  let colorIndex = 0;
+  const rainbow = [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "navy",
+    "purple",
+  ];
 
   // Add event listener
   function createRect(e) {
@@ -111,13 +156,18 @@ const Room = () => {
     tmp[e.target.name] = e.target.value;
     setRect(tmp);
   }
+
   function addRect(e) {
     e.preventDefault();
+    let tmp = rect;
     if (canvasImages) {
-      const setRect = {...rect};
+      rect.x = canvasImages[currentImage].x;
+      rect.y = canvasImages[currentImage].y;
+      const setRect = { ...rect };
       setRects(rects.concat([setRect]));
     }
   }
+  
   function clearBoard(e) {
     const {
       target: { id },
@@ -136,14 +186,28 @@ const Room = () => {
   };
 
   useEffect(() => {
+    if (didMount.current) {
+      setShow(true);
+    } else {
+      didMount.current = true;
+    }
     localStorage.setItem(
       "canvasImages",
       JSON.stringify(canvasImages)
     );
   }, [canvasImages]);
 
+  useEffect(() => {
+    localStorage.setItem("rulerSize", size);
+  }, [size]);
+
   return (
     <>
+      <RoomSize
+        show={show}
+        setShow={setShow}
+        setSize={setSize}
+      />
       <div id={"buttons-wrapper"}>
         <button id="canvasImages" onClick={clearBoard}>
           Clear Image
@@ -203,8 +267,12 @@ const Room = () => {
                   onSelect={() => {
                     selectShape(i);
                   }}
+                  offSelect={() => {
+                    selectShape(null);
+                  }}
                   onChange={(e, params) => {
                     const { x, y, width, height } = params;
+                    currentImage = i;
                     canvasImages[i].x = x;
                     canvasImages[i].y = y;
                     canvasImages[i].width = width;
@@ -220,19 +288,33 @@ const Room = () => {
                 />
               );
             })}
-            {rects ? rects.map((rect, i) => {
-              return (
-                <Rect
-                  key={"rect" + i}
-                  x={window.innerWidth/2}
-                  y={window.innerHeight/2}
-                  width={parseInt(rect.width)}
-                  height={parseInt(rect.height)}
-                  fill="red"
-                  draggable
-                />
-              );
-            }) : <Rect width={0} height={0}/>}
+            {rects ? (
+              rects.map((rect, i) => {
+                return (
+                  <Rect
+                    key={"rect" + i}
+                    x={rect.x}
+                    y={rect.y}
+                    width={parseInt(rect.width)}
+                    height={parseInt(rect.height)}
+                    opacity={0.6}
+                    fill={rainbow[colorIndex++ % 7]}
+                    draggable
+                    
+                  />
+                );
+              })
+            ) : (
+              <Rect width={0} height={0} />
+            )}
+            <Rect
+              x={ (window.innerWidth - parseInt(rulerSize)) / 2 }
+              y={50}
+              width={parseInt(rulerSize)}
+              height={8}
+              fill="red"
+              opacity={0.4}
+            />
           </Layer>
         </Stage>
       </div>
