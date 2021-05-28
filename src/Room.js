@@ -17,7 +17,7 @@ const URLImage = ({
   onSelect,
   offSelect,
   onChange,
-  canvasImages,
+  rooms,
 }) => {
   const [roomImg] = useImage(image.src);
   const [pinImg] = useImage("images/pin.png");
@@ -40,9 +40,9 @@ const URLImage = ({
   };
   
   // set size of LocalStorage
-  if (canvasImages[index].width > 0 && roomImg) {
-    roomImg.width = canvasImages[index].width;
-    roomImg.height = canvasImages[index].height;
+  if (rooms[index].width > 0 && roomImg) {
+    roomImg.width = rooms[index].width;
+    roomImg.height = rooms[index].height;
   }
   return (
     <React.Fragment>
@@ -118,18 +118,17 @@ const Room = () => {
   const dragUrl = useRef();
   const stageRef = useRef();
   const didMount = useRef(false);
-  /* Canvas Image Part */
-  const [canvasImages, setCanvasImages] = useState(
-    JSON.parse(localStorage.getItem("canvasImages")) || []
+  /* Rooms Part */
+  const [rooms, setrooms] = useState(
+    JSON.parse(localStorage.getItem("rooms")) || []
   );
-  // Select a image when location changed
-  let currentImage = 0;
-
-  const [rects, setRects] = useState([]);
-  const [rect, setRect] = useState({ x: 0, y: 0 });
+  const [currentRoom, setCurrentRoom] = useState(0);
+  /* Funitures Part */
+  const [rects, setRects] = useState(
+    JSON.parse(localStorage.getItem("funitures")) || []
+  );
+  const [rect, setRect] = useState({ x: 0, y: 0, group: 0 });
   const [selectedId, selectShape] = useState(null);
-  // this is a tricky way for calling useEffect
-  const [cnt, setCount] = useState(0);
   // this is a trigger for modal
   const [show, setShow] = useState(false);
   // this is a ruler for setting room size
@@ -137,7 +136,8 @@ const Room = () => {
   const [size, setSize] = useState(
     rulerSize ? rulerSize : "0"
   );
-
+  
+  
   let colorIndex = 0;
   const rainbow = [
     "red",
@@ -159,15 +159,23 @@ const Room = () => {
 
   function addRect(e) {
     e.preventDefault();
-    let tmp = rect;
-    if (canvasImages) {
-      rect.x = canvasImages[currentImage].x;
-      rect.y = canvasImages[currentImage].y;
-      const setRect = { ...rect };
-      setRects(rects.concat([setRect]));
+    if (rooms) {
+      rect.x = rooms[currentRoom].x;
+      rect.y = rooms[currentRoom].y;
+      rect.group = currentRoom;
+      setRects(rects.concat([{ ...rect }]));
     }
   }
-  
+
+  function moveRect(e) {
+    
+    const i = e.target.index - 2;
+    const {x, y} = e.target.attrs;
+    rects[i].x = x;
+    rects[i].y = y;
+    setRects(rects.concat([]));
+  }
+
   function clearBoard(e) {
     const {
       target: { id },
@@ -181,25 +189,33 @@ const Room = () => {
     const clickedOnEmpty = e.target === e.target.getStage();
     if (clickedOnEmpty) {
       selectShape(null);
-      setCount(0);
     }
   };
 
   useEffect(() => {
     if (didMount.current) {
       setShow(true);
+      setCurrentRoom(rooms.length-1);
+      localStorage.setItem(
+        "rooms",
+        JSON.stringify(rooms)
+      );
     } else {
       didMount.current = true;
     }
-    localStorage.setItem(
-      "canvasImages",
-      JSON.stringify(canvasImages)
-    );
-  }, [canvasImages]);
+  }, [rooms]);
 
   useEffect(() => {
     localStorage.setItem("rulerSize", size);
   }, [size]);
+
+  useEffect(() => {
+    console.log(JSON.stringify(rects))
+    localStorage.setItem(
+      "funitures", 
+      JSON.stringify(rects)
+    );
+  }, [rects]);
 
   return (
     <>
@@ -209,8 +225,11 @@ const Room = () => {
         setSize={setSize}
       />
       <div id={"buttons-wrapper"}>
-        <button id="canvasImages" onClick={clearBoard}>
+        <button id="rooms" onClick={clearBoard}>
           Clear Image
+        </button>
+        <button id="funitures" onClick={clearBoard}>
+          Clear Rects
         </button>
         <form onSubmit={addRect}>
           width:
@@ -235,8 +254,8 @@ const Room = () => {
           // register event position
           stageRef.current.setPointersPositions(e);
           // add image
-          setCanvasImages(
-            canvasImages.concat([
+          setrooms(
+            rooms.concat([
               {
                 ...stageRef.current.getPointerPosition(),
                 src: dragUrl.current,
@@ -245,6 +264,7 @@ const Room = () => {
               },
             ])
           );
+          
         }}
         onDragOver={(e) => e.preventDefault()}
       >
@@ -257,7 +277,7 @@ const Room = () => {
           onTouchStart={checkDeselect}
         >
           <Layer>
-            {canvasImages.map((image, i) => {
+            {rooms.map((image, i) => {
               return (
                 <URLImage
                   key={i}
@@ -265,6 +285,7 @@ const Room = () => {
                   index={i}
                   isSelected={i === selectedId}
                   onSelect={() => {
+                    setCurrentRoom(i);
                     selectShape(i);
                   }}
                   offSelect={() => {
@@ -272,24 +293,21 @@ const Room = () => {
                   }}
                   onChange={(e, params) => {
                     const { x, y, width, height } = params;
-                    currentImage = i;
-                    canvasImages[i].x = x;
-                    canvasImages[i].y = y;
-                    canvasImages[i].width = width;
-                    canvasImages[i].height = height;
-                    setCanvasImages(canvasImages);
+                    rooms[i].x = x;
+                    rooms[i].y = y;
+                    rooms[i].width = width;
+                    rooms[i].height = height;
+                    setrooms(rooms);
                     localStorage.setItem(
-                      "canvasImages",
-                      JSON.stringify(canvasImages)
+                      "rooms",
+                      JSON.stringify(rooms)
                     );
-                    setCount(cnt + 1);
                   }}
-                  canvasImages={canvasImages}
+                  rooms={rooms}
                 />
               );
             })}
-            {rects ? (
-              rects.map((rect, i) => {
+            {rects.map((rect, i) => {
                 return (
                   <Rect
                     key={"rect" + i}
@@ -300,13 +318,10 @@ const Room = () => {
                     opacity={0.6}
                     fill={rainbow[colorIndex++ % 7]}
                     draggable
-                    
+                    onDragEnd={moveRect}
                   />
                 );
-              })
-            ) : (
-              <Rect width={0} height={0} />
-            )}
+            })}
             <Rect
               x={ (window.innerWidth - parseInt(rulerSize)) / 2 }
               y={50}
