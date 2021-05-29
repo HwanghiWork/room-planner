@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React from "react";
 import ImageUploading from "react-images-uploading";
 
@@ -55,9 +57,9 @@ const Imagebar = (props) => {
           {...dragProps}
         >
           {imageList.map((image, index) => (
-            <div key={index} 
-            style={{ position:"relative" }}
-            className="image-item">
+            <div key={index}
+              style={{ position: "relative" }}
+              className="image-item">
               <img
                 src={image["data_url"]}
                 width={imagebarHeight}
@@ -73,9 +75,9 @@ const Imagebar = (props) => {
 
               <button
                 style={{
-                    position:"absolute",
-                    top:"0",
-                    right:"0",
+                  position: "absolute",
+                  top: "0",
+                  right: "0",
                 }}
                 onClick={(e) => {
                   e.stopPropagation();

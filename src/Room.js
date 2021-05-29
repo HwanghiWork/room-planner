@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React, { useState, useRef, useEffect } from "react";
 import Imagebar from "Imagebar";
 import {

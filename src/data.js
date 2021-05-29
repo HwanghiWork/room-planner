@@ -8,7 +8,8 @@ export default [
     price: "790,000원",
     width: 1150,
     height: 2280,
-    url: "http://samickgagu.com/shop/item.php?it_id=1614324328"
+    url: "http://samickgagu.com/shop/item.php?it_id=1614324328",
+    imgurl: "http://samickgagu.com/data/item/1616990378/KakaoTalk_20200526_16224592317777.jpg"
   },
 
   {
@@ -18,7 +19,8 @@ export default [
     price: "790,000원",
     width: 1620,
     height: 2245,
-    url: "http://samickgagu.com/shop/item.php?it_id=1614324668"
+    url: "http://samickgagu.com/shop/item.php?it_id=1614324668",
+    imgurl: "http://samickgagu.com/data/item/1616990378/KakaoTalk_20200526_16224592317777.jpg"
   },
 
   {
@@ -28,7 +30,8 @@ export default [
     price: "1,009,000원",
     width: 1620,
     height: 2245,
-    url: "http://samickgagu.com/shop/item.php?it_id=1606884609"
+    url: "http://samickgagu.com/shop/item.php?it_id=1606884609",
+    imgurl: "http://samickgagu.com/data/item/1616990378/KakaoTalk_20200526_16224592317777.jpg"
   },
 
   {
@@ -38,7 +41,8 @@ export default [
     price: "790,000원",
     width: 1150,
     height: 2280,
-    url: "http://samickgagu.com/shop/item.php?it_id=1614324328"
+    url: "http://samickgagu.com/shop/item.php?it_id=1614324328",
+    imgurl: "http://samickgagu.com/data/item/1616990378/KakaoTalk_20200526_16224592317777.jpg"
   },
 
   {
@@ -48,7 +52,8 @@ export default [
     price: "790,000원",
     width: 1620,
     height: 2245,
-    url: "http://samickgagu.com/shop/item.php?it_id=1614324668"
+    url: "http://samickgagu.com/shop/item.php?it_id=1614324668",
+    imgurl: "http://samickgagu.com/data/item/1616990378/KakaoTalk_20200526_16224592317777.jpg"
   },
 
   {
@@ -58,6 +63,7 @@ export default [
     price: "1,009,000원",
     width: 1620,
     height: 2245,
-    url: "http://samickgagu.com/shop/item.php?it_id=1606884609"
+    url: "http://samickgagu.com/shop/item.php?it_id=1606884609",
+    imgurl: "http://samickgagu.com/data/item/1616990378/KakaoTalk_20200526_16224592317777.jpg"
   }
 ]

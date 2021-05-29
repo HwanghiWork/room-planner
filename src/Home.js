@@ -81,12 +81,7 @@ function Furniture(props, i) {
     <div className="가구">
       <img
         className="가구추천이미지"
-        src={
-          process.env.PUBLIC_URL +
-          "침대" +
-          (props.i + 1) +
-          ".jpg"
-        }
+        src={props.가구.imgurl}
         alt="copy url"
         width="100%"
       />
