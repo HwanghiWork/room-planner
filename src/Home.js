@@ -82,35 +82,47 @@ const Home = () => {
           <Nav fill variant="tabs" defaultActiveKey="link-1">
             <Nav.Item>
               <Nav.Link eventKey="link-1" onClick={() => {
-                가구종류변경(1)
+                가구종류변경(1) // 침대
                 axios.get('https://rudwl1005a.github.io/bed/beddata1.json')
                   .then((result) => { 가구변경([...result.data]) })
                   .catch(() => { console.log('실패') })
+                toggleClass(currnetPage);
+                toggleClass(1);
+                setCurrentPage(1);
               }
               }>침대</Nav.Link>
             </Nav.Item>
             <Nav.Item>
               <Nav.Link eventKey="link-2" onClick={() => {
-                가구종류변경(2)
+                가구종류변경(2) // 옷장
                 axios.get('https://rudwl1005a.github.io/closet/closetdata1.json')
                   .then((result) => { 가구변경([...result.data]) })
                   .catch(() => { console.log('실패') })
+                toggleClass(currnetPage);
+                toggleClass(1);
+                setCurrentPage(1);
               }}>옷장</Nav.Link>
             </Nav.Item>
             <Nav.Item>
               <Nav.Link eventKey="link-3" onClick={() => {
-                가구종류변경(3)
+                가구종류변경(3) // 책상
                 axios.get('https://rudwl1005a.github.io/desk/deskdata1.json')
                   .then((result) => { 가구변경([...result.data]) })
                   .catch(() => { console.log('실패') })
+                toggleClass(currnetPage);
+                toggleClass(1);
+                setCurrentPage(1);
               }}>책상</Nav.Link>
             </Nav.Item>
             <Nav.Item>
               <Nav.Link eventKey="link-4" onClick={() => {
-                가구종류변경(4)
+                가구종류변경(4) // 서랍장
                 axios.get('https://rudwl1005a.github.io/drawer/drawerdata1.json')
                   .then((result) => { 가구변경([...result.data]) })
                   .catch(() => { console.log('실패') })
+                toggleClass(currnetPage);
+                toggleClass(1);
+                setCurrentPage(1);
               }}>서랍장</Nav.Link>
             </Nav.Item>
           </Nav>
@@ -173,46 +185,6 @@ const Home = () => {
                       .then((result) => { 가구변경([...result.data]) })
                       .catch(() => { console.log('실패') })
                   }}>5</a>
-                  <a href="#" id='6' onClick={() => {
-                    toggleClass(currnetPage);
-                    toggleClass(6);
-                    setCurrentPage(6);
-                    axios.get('https://rudwl1005a.github.io/bed/beddata6.json')
-                      .then((result) => { 가구변경([...result.data]) })
-                      .catch(() => { console.log('실패') })
-                  }}>6</a>
-                  <a href="#" id='7' onClick={() => {
-                    toggleClass(currnetPage);
-                    toggleClass(7);
-                    setCurrentPage(7);
-                    axios.get('https://rudwl1005a.github.io/bed/beddata7.json')
-                      .then((result) => { 가구변경([...result.data]) })
-                      .catch(() => { console.log('실패') })
-                  }}>7</a>
-                  <a href="#" id='8' onClick={() => {
-                    toggleClass(currnetPage);
-                    toggleClass(8);
-                    setCurrentPage(8);
-                    axios.get('https://rudwl1005a.github.io/bed/beddata8.json')
-                      .then((result) => { 가구변경([...result.data]) })
-                      .catch(() => { console.log('실패') })
-                  }}>8</a>
-                  <a href="#" id='9' onClick={() => {
-                    toggleClass(currnetPage);
-                    toggleClass(9);
-                    setCurrentPage(9);
-                    axios.get('https://rudwl1005a.github.io/bed/beddata9.json')
-                      .then((result) => { 가구변경([...result.data]) })
-                      .catch(() => { console.log('실패') })
-                  }}>9</a>
-                  <a href="#" id='10' onClick={() => {
-                    toggleClass(currnetPage);
-                    toggleClass(10);
-                    setCurrentPage(10);
-                    axios.get('https://rudwl1005a.github.io/bed/beddata10.json')
-                      .then((result) => { 가구변경([...result.data]) })
-                      .catch(() => { console.log('실패') })
-                  }}>10</a>
                 </div>
               </div>
             </div>
@@ -276,46 +248,6 @@ const Home = () => {
                         .then((result) => { 가구변경([...result.data]) })
                         .catch(() => { console.log('실패') })
                     }}>5</a>
-                    <a href="#" id='6' onClick={() => {
-                      toggleClass(currnetPage);
-                      toggleClass(6);
-                      setCurrentPage(6);
-                      axios.get('https://rudwl1005a.github.io/closet/closetdata6.json')
-                        .then((result) => { 가구변경([...result.data]) })
-                        .catch(() => { console.log('실패') })
-                    }}>6</a>
-                    <a href="#" id='7' onClick={() => {
-                      toggleClass(currnetPage);
-                      toggleClass(7);
-                      setCurrentPage(7);
-                      axios.get('https://rudwl1005a.github.io/closet/closetdata7.json')
-                        .then((result) => { 가구변경([...result.data]) })
-                        .catch(() => { console.log('실패') })
-                    }}>7</a>
-                    <a href="#" id='8' onClick={() => {
-                      toggleClass(currnetPage);
-                      toggleClass(8);
-                      setCurrentPage(8);
-                      axios.get('https://rudwl1005a.github.io/closet/closetdata8.json')
-                        .then((result) => { 가구변경([...result.data]) })
-                        .catch(() => { console.log('실패') })
-                    }}>8</a>
-                    <a href="#" id='9' onClick={() => {
-                      toggleClass(currnetPage);
-                      toggleClass(9);
-                      setCurrentPage(9);
-                      axios.get('https://rudwl1005a.github.io/closet/closetdata9.json')
-                        .then((result) => { 가구변경([...result.data]) })
-                        .catch(() => { console.log('실패') })
-                    }}>9</a>
-                    <a href="#" id='10' onClick={() => {
-                      toggleClass(currnetPage);
-                      toggleClass(10);
-                      setCurrentPage(10);
-                      axios.get('https://rudwl1005a.github.io/closet/closetdata10.json')
-                        .then((result) => { 가구변경([...result.data]) })
-                        .catch(() => { console.log('실패') })
-                    }}>10</a>
                   </div>
                 </div>
               </div>
@@ -379,46 +311,6 @@ const Home = () => {
                           .then((result) => { 가구변경([...result.data]) })
                           .catch(() => { console.log('실패') })
                       }}>5</a>
-                      <a href="#" id='6' onClick={() => {
-                        toggleClass(currnetPage);
-                        toggleClass(6);
-                        setCurrentPage(6);
-                        axios.get('https://rudwl1005a.github.io/desk/deskdata6.json')
-                          .then((result) => { 가구변경([...result.data]) })
-                          .catch(() => { console.log('실패') })
-                      }}>6</a>
-                      <a href="#" id='7' onClick={() => {
-                        toggleClass(currnetPage);
-                        toggleClass(7);
-                        setCurrentPage(7);
-                        axios.get('https://rudwl1005a.github.io/desk/deskdata7.json')
-                          .then((result) => { 가구변경([...result.data]) })
-                          .catch(() => { console.log('실패') })
-                      }}>7</a>
-                      <a href="#" id='8' onClick={() => {
-                        toggleClass(currnetPage);
-                        toggleClass(8);
-                        setCurrentPage(8);
-                        axios.get('https://rudwl1005a.github.io/desk/deskdata8.json')
-                          .then((result) => { 가구변경([...result.data]) })
-                          .catch(() => { console.log('실패') })
-                      }}>8</a>
-                      <a href="#" id='9' onClick={() => {
-                        toggleClass(currnetPage);
-                        toggleClass(9);
-                        setCurrentPage(9);
-                        axios.get('https://rudwl1005a.github.io/desk/deskdata9.json')
-                          .then((result) => { 가구변경([...result.data]) })
-                          .catch(() => { console.log('실패') })
-                      }}>9</a>
-                      <a href="#" id='10' onClick={() => {
-                        toggleClass(currnetPage);
-                        toggleClass(10);
-                        setCurrentPage(10);
-                        axios.get('https://rudwl1005a.github.io/desk/deskdata10.json')
-                          .then((result) => { 가구변경([...result.data]) })
-                          .catch(() => { console.log('실패') })
-                      }}>10</a>
                     </div>
                   </div>
                 </div>
@@ -481,46 +373,6 @@ const Home = () => {
                           .then((result) => { 가구변경([...result.data]) })
                           .catch(() => { console.log('실패') })
                       }}>5</a>
-                      <a href="#" id='6' onClick={() => {
-                        toggleClass(currnetPage);
-                        toggleClass(6);
-                        setCurrentPage(6);
-                        axios.get('https://rudwl1005a.github.io/drawer/drawerdata6.json')
-                          .then((result) => { 가구변경([...result.data]) })
-                          .catch(() => { console.log('실패') })
-                      }}>6</a>
-                      <a href="#" id='7' onClick={() => {
-                        toggleClass(currnetPage);
-                        toggleClass(7);
-                        setCurrentPage(7);
-                        axios.get('https://rudwl1005a.github.io/drawer/drawerdata7.json')
-                          .then((result) => { 가구변경([...result.data]) })
-                          .catch(() => { console.log('실패') })
-                      }}>7</a>
-                      <a href="#" id='8' onClick={() => {
-                        toggleClass(currnetPage);
-                        toggleClass(8);
-                        setCurrentPage(8);
-                        axios.get('https://rudwl1005a.github.io/drawer/drawerdata8.json')
-                          .then((result) => { 가구변경([...result.data]) })
-                          .catch(() => { console.log('실패') })
-                      }}>8</a>
-                      <a href="#" id='9' onClick={() => {
-                        toggleClass(currnetPage);
-                        toggleClass(9);
-                        setCurrentPage(9);
-                        axios.get('https://rudwl1005a.github.io/drawer/drawerdata9.json')
-                          .then((result) => { 가구변경([...result.data]) })
-                          .catch(() => { console.log('실패') })
-                      }}>9</a>
-                      <a href="#" id='10' onClick={() => {
-                        toggleClass(currnetPage);
-                        toggleClass(10);
-                        setCurrentPage(10);
-                        axios.get('https://rudwl1005a.github.io/drawer/drawerdata10.json')
-                          .then((result) => { 가구변경([...result.data]) })
-                          .catch(() => { console.log('실패') })
-                      }}>10</a>
                     </div>
                   </div>
                 </div>
