@@ -31,11 +31,10 @@ const URLImage = ({
       trRef.current.nodes([imgRef.current]);
       trRef.current.getLayer().batchDraw();
     }
-  }, [isSelected]);
+  }, [pin, isSelected]);
 
   const togglePin = () => {
     if (!pin)
-      // pin is activated
       offSelect();
     setPin(!pin);
   };
@@ -81,7 +80,7 @@ const URLImage = ({
             x: node.x(),
             y: node.y(),
             width: Math.max(5, node.width() * scaleX),
-            height: Math.max(5, node.width() * scaleY),
+            height: Math.max(5, node.height() * scaleY),
           });
           // we will reset it back
           node.scaleX(1);
@@ -106,9 +105,10 @@ const URLImage = ({
         image={pinImg}
         x={image.x}
         y={image.y}
+        
         // offset to set origin to the corner of the image
-        offsetX={roomImg ? -roomImg.width / 2 : 0}
-        offsetY={pinImg ? pinImg.height : 0}
+        offsetX={roomImg ? -roomImg.width / 3 : 0}
+        offsetY={roomImg ? roomImg.height / 2 : 0}
         opacity={pin ? 1 : 0.5}
       />
     </React.Fragment>
@@ -246,7 +246,7 @@ const Room = () => {
         setShow={setShow}
         setSize={setSize}
       />
-      <div id={"buttons-wrapper"}>
+      <div id={"buttons-wrapper"} >
         <button id="rooms" onClick={clearBoard}>
           Clear Image
         </button>
@@ -335,9 +335,9 @@ const Room = () => {
               );
             })}
             <Rect
-              x={(window.innerWidth - parseInt(rulerSize))/2}
+              x={window.innerWidth * 0.2}
               y={50}
-              width={parseInt(rulerSize)}
+              width={window.innerWidth * 0.6}
               height={8}
               fill="red"
               opacity={0.4}
