@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import React, { useState, useRef, useEffect } from "react";
 import Imagebar from "Imagebar";
 import {
@@ -7,59 +5,67 @@ import {
   Layer,
   Image,
   Transformer,
+  Rect,
 } from "react-konva";
-import {
-  Button,
-  ButtonGroup,
-} from "react-bootstrap";
 import useImage from "use-image";
+import RoomScale from "RoomScale";
 
 const URLImage = ({
   image,
-  index,
   isSelected,
   onSelect,
+  offSelect,
   onChange,
-  canvasImages,
+  room
 }) => {
-  const [img] = useImage(image.src);
-  if (canvasImages[index].width > 0 && img) {
-    img.width = canvasImages[index].width;
-    img.height = canvasImages[index].height;
-  }
+  const [roomImg] = useImage(image.src);
+  const [pinImg] = useImage("images/pin.png");
+  const [pin, setPin] = useState(false);
   const imgRef = useRef();
   const trRef = useRef();
 
   useEffect(() => {
-    if (isSelected) {
+    if (!pin && isSelected) {
       // we need to attach transformer manually
       trRef.current.nodes([imgRef.current]);
       trRef.current.getLayer().batchDraw();
     }
-  }, [isSelected]);
+  }, [pin, isSelected]);
 
+  const togglePin = () => {
+    if (!pin)
+      offSelect();
+    setPin(!pin);
+  };
+
+  // set size of LocalStorage
+  if (room.width > 0 && roomImg) {
+    roomImg.width = room.width;
+    roomImg.height = room.height;
+  }
   return (
     <React.Fragment>
       <Image
         onClick={onSelect}
         onTap={onSelect}
         ref={imgRef}
-        image={img}
+        image={roomImg}
         x={image.x}
         y={image.y}
-        draggable
-        // I will use offset to set origin to the center of the image
-        offsetX={img ? img.width / 2 : 0}
-        offsetY={img ? img.height / 2 : 0}
+        draggable={!pin}
+        // Use offset to set origin to the center of the image
+        offsetX={roomImg ? roomImg.width / 2 : 0}
+        offsetY={roomImg ? roomImg.height / 1.8 : 0}
         onDragEnd={(e) => {
           const {
             attrs: { x, y },
           } = e.target;
-          onChange(e, {
+          onChange("dragend", {
             x: x,
             y: y,
-            width: img.width,
-            height: img.height,
+            width: roomImg.width,
+            height: roomImg.height,
+            src: room.src,
           });
         }}
         onTransformEnd={(e) => {
@@ -67,14 +73,16 @@ const URLImage = ({
           // and NOT its width or height
           // but in the store we have only width and height
           // to match the data better we will reset scale on transform end
+          const {
+            attrs: { x, y },
+          } = e.target;
           const node = imgRef.current;
-          const scaleX = node.scaleX();
-          const scaleY = node.scaleY();
-          onChange(e, {
-            x: node.x(),
-            y: node.y(),
-            width: Math.max(5, node.width() * scaleX),
-            height: Math.max(5, node.width() * scaleY),
+          onChange("transformend", {
+            x: x,
+            y: y,
+            width: Math.max(5, roomImg.width * node.scaleX()),
+            height: Math.max(5, roomImg.height * node.scaleY()),
+            src: room.src,
           });
           // we will reset it back
           node.scaleX(1);
@@ -83,31 +91,92 @@ const URLImage = ({
       />
       {isSelected && (
         <Transformer
-          ref={trRef}
-          boundBoxFunc={(oldBox, newBox) => {
-            // limit resize
-            if (newBox.width < 5 || newBox.height < 5) {
-              return oldBox;
-            }
-            return newBox;
+          ref = {trRef}
+          boundBoxFunc = {(oldBox, newBox) => {
+            if (newBox.width < 5 || newBox.height < 5) return oldBox;
+            else return newBox; 
           }}
         />
       )}
+      <Image
+        onClick={togglePin}
+        onTap={togglePin}
+        image={pinImg}
+        x={image.x}
+        y={image.y} 
+        offsetX={roomImg ? -roomImg.width / 2 : 0}
+        offsetY={roomImg ? roomImg.height / 2 : 0}
+        opacity={pin ? 1 : 0.5}
+      />
     </React.Fragment>
   );
 };
 
-const Room = (props) => {
+const Room = () => {
   const dragUrl = useRef();
   const stageRef = useRef();
-  const [canvasImages, setCanvasImages] = useState(
-    JSON.parse(localStorage.getItem("canvasImages")) || []
+  const didMount = useRef(false);
+  /* Rooms Part */
+  const [rooms, setRooms] = useState(
+    JSON.parse(localStorage.getItem("rooms")) || []
   );
+  const [currentRoom, setCurrentRoom] = useState(0);
+  /* Funitures Part */
+  const [rects, setRects] = useState(
+    JSON.parse(localStorage.getItem("funitures")) || []
+  );
+  const [rect, setRect] = useState({
+    id: 0,
+    x: 0,
+    y: 0,
+    offsetX: 0,
+    offsetY: 0,
+    width: 0,
+    height: 0,
+    group: 0,
+  });
   const [selectedId, selectShape] = useState(null);
-  // this is a tricky way for calling useEffect
-  const [cnt, setCount] = useState(0);
+  
+  // this is a scale that window width / real room's width
+  const [scale, setScale] = useState(1);
 
-  // button click event listener
+  let colorIndex = 0;
+  const rainbow = [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "navy",
+    "purple",
+  ];
+
+  // Add event listener
+  function createRect(e) {
+    e.preventDefault();
+    let tmp = rect;
+    tmp[e.target.name] = e.target.value;
+    setRect(tmp);
+  }
+
+  function addRect(e) {
+    e.preventDefault();
+    if (rooms) {
+      rect.x = rooms[currentRoom].x;
+      rect.y = rooms[currentRoom].y;
+      rect.group = currentRoom;
+      rect.id = rects.length;
+      setRects(rects.concat([{ ...rect }]));
+    }
+  }
+
+  function moveRect(e, i) {
+    const { x, y } = e.target.attrs;
+    rects[i].offsetX = x - rects[i].x;
+    rects[i].offsetY = y - rects[i].y;
+    setRects(rects.concat([]));
+  }
+
   function clearBoard(e) {
     const {
       target: { id },
@@ -121,19 +190,46 @@ const Room = (props) => {
     const clickedOnEmpty = e.target === e.target.getStage();
     if (clickedOnEmpty) {
       selectShape(null);
-      setCount(0);
     }
   };
 
   useEffect(() => {
+    localStorage.setItem("rooms", JSON.stringify(rooms));
+  }, [rooms]);
+
+  useEffect(() => {
     localStorage.setItem(
-      "canvasImages",
-      JSON.stringify(canvasImages)
+      "funitures",
+      JSON.stringify(rects)
     );
-  }, [canvasImages]);
+  }, [rects]);
 
   return (
     <>
+      <div className="d-flex" id={"buttons-wrapper"} >
+        <RoomScale scale={scale} setScale={setScale} />
+        <button id="rooms" onClick={clearBoard}>
+          Clear Image
+        </button>
+        <button id="funitures" onClick={clearBoard}>
+          Clear Rects
+        </button>
+        <form className="ml-3" onSubmit={addRect}>
+          width:
+          <input
+            name="width"
+            type="text"
+            onChange={createRect}
+          />
+          height:
+          <input
+            name="height"
+            type="text"
+            onChange={createRect}
+          />
+          <input type="submit" value="Submit" />
+        </form>
+      </div>
       <Imagebar dragUrl={dragUrl} />
       <div
         onDrop={(e) => {
@@ -141,8 +237,8 @@ const Room = (props) => {
           // register event position
           stageRef.current.setPointersPositions(e);
           // add image
-          setCanvasImages(
-            canvasImages.concat([
+          setRooms(
+            rooms.concat([
               {
                 ...stageRef.current.getPointerPosition(),
                 src: dragUrl.current,
@@ -155,48 +251,78 @@ const Room = (props) => {
         onDragOver={(e) => e.preventDefault()}
       >
         <Stage
-          width={props.width}
-          height={props.height}
+          width={window.innerWidth}
+          height={window.innerHeight}
           style={{ border: "1px solid grey" }}
           ref={stageRef}
           onMouseDown={checkDeselect}
           onTouchStart={checkDeselect}
         >
           <Layer>
-            {canvasImages.map((image, i) => {
+            {rooms.map((image, roomId) => {
               return (
                 <URLImage
-                  key={i}
+                  key={roomId}
                   image={image}
-                  index={i}
-                  isSelected={i === selectedId}
+                  isSelected={selectedId === roomId}
                   onSelect={() => {
-                    selectShape(i);
+                    setCurrentRoom(roomId);
+                    selectShape(roomId);
                   }}
-                  onChange={(e, params) => {
-                    const { x, y, width, height } = params;
-                    canvasImages[i].x = x;
-                    canvasImages[i].y = y;
-                    canvasImages[i].width = width;
-                    canvasImages[i].height = height;
-                    setCanvasImages(canvasImages);
-                    localStorage.setItem(
-                      "canvasImages",
-                      JSON.stringify(canvasImages)
-                    );
-                    setCount(cnt + 1);
+                  offSelect={() => { selectShape(null); }}
+                  onChange={(event, params) => {
+                    const {x, y} = params;
+                    setCurrentRoom(roomId);
+                    switch(event) {
+                      case "dragend":
+                        rooms[roomId].x = x;
+                        rooms[roomId].y = y;
+                        break;
+                      case "transformend":
+                        rooms[roomId] = {...params};
+                        break;
+                    }
+                    setRooms(rooms.concat([]));
+                    
+                    if(rects) {
+                      for(let i=0; i < rects.length; i++) {
+                        if(roomId === rects[i].group) {
+                          rects[i].x = x;
+                          rects[i].y = y;
+                        }
+                      }
+                      setRects(rects.concat([]));
+                    }
                   }}
-                  canvasImages={canvasImages}
+                  room={rooms[roomId]}
                 />
               );
             })}
+            {rects.map((rect, i) => {
+              return (
+                <Rect
+                  key={"rect" + i}
+                  x={rect.x + rect.offsetX}
+                  y={rect.y + rect.offsetY}
+                  width={parseInt(rect.width) * scale}
+                  height={parseInt(rect.height) * scale}
+                  opacity={0.6}
+                  fill={rainbow[colorIndex++ % 7]}
+                  draggable
+                  onDragEnd={(e) => moveRect(e, rect.id)}
+                />
+              );
+            })}
+            <Rect
+              x={window.innerWidth * 0.1}
+              y={50}
+              width={window.innerWidth * 0.6}
+              height={8}
+              fill="red"
+              opacity={0.4}
+            />
           </Layer>
         </Stage>
-        <div id="buttons-wrapper" className={"pt-3"}>
-          <Button id="canvasImages" onClick={clearBoard}>
-            Clear
-          </Button>
-        </div>
       </div>
     </>
   );

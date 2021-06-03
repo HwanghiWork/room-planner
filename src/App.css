@@ -2,23 +2,16 @@
   text-align: center;
 }
 
-.pagination {
-  justify-content: center;
-}
-
 .왼쪽마진 {
   margin-left: 10px;
 }
 
-.사용자도형 {
-  align-items: left;
-  margin-right: 10px;
-  flex: 1;
-}
-
 .가구추천 {
-  align-items: right;
-  margin-left: 30px;
+  background-color: white;
+  width: 200px;
+  z-index: 100;
+  top:0;
+  right: 0;
   flex: 2;
 }
 

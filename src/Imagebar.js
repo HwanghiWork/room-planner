@@ -1,11 +1,9 @@
-/* eslint-disable */
-
 import React from "react";
 import ImageUploading from "react-images-uploading";
 
 const Imagebar = (props) => {
   const [images, setImages] = React.useState(
-    JSON.parse(localStorage.getItem("barImages")) || []
+    JSON.parse(localStorage.getItem('barImages')) || []
   );
   const maxNumber = 69;
   const imagebarHeight = "150px";
@@ -15,10 +13,7 @@ const Imagebar = (props) => {
   };
 
   React.useEffect(() => {
-    localStorage.setItem(
-      "barImages",
-      JSON.stringify(images)
-    );
+    localStorage.setItem("barImages", JSON.stringify(images));
   }, [images]);
 
   return (
@@ -44,7 +39,7 @@ const Imagebar = (props) => {
           style={{
             border: "1px solid black",
             paddingTop:
-              images.length > 0 ? "0" : imagebarHeight,
+              images.length > 0 ? 0 : imagebarHeight,
             backgroundImage:
               images.length > 0
                 ? null
@@ -59,7 +54,7 @@ const Imagebar = (props) => {
           {imageList.map((image, index) => (
             <div key={index}
               style={{ position: "relative" }}
-              className="image-item">
+              className="image-item m-3">
               <img
                 src={image["data_url"]}
                 width={imagebarHeight}
