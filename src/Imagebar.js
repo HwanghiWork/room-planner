@@ -6,7 +6,7 @@ const Imagebar = (props) => {
     JSON.parse(localStorage.getItem('barImages')) || []
   );
   const maxNumber = 69;
-
+  const imagebarHeight = "150px";
   const onChange = (imageList, addUpdateIndex) => {
     // data for submit
     setImages(imageList);
@@ -38,43 +38,47 @@ const Imagebar = (props) => {
           onClick={onImageUpload}
           style={{
             border: "1px solid black",
-            paddingTop: images.length > 0 ? '0' : '150px',
-            backgroundImage: images.length > 0 ? null : `url("/images/empty.png")`,
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center',
-            backgroundSize: 'fit',
-            opacity: images.length > 0 ? '1.0' : '0.6' 
+            paddingTop:
+              images.length > 0 ? 0 : imagebarHeight,
+            backgroundImage:
+              images.length > 0
+                ? null
+                : `url("/images/empty.png")`,
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
+            backgroundSize: "fit",
+            opacity: images.length > 0 ? "1.0" : "0.6",
           }}
           {...dragProps}
         >
           {imageList.map((image, index) => (
-            <div key={index} className="image-item">
+            <div key={index}
+              style={{ position: "relative" }}
+              className="image-item m-3">
               <img
                 src={image["data_url"]}
-                width="150"
+                width={imagebarHeight}
                 draggable
                 onDragStart={(e) => {
                   props.dragUrl.current = e.target.src;
                 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onImageUpdate(index);
+                }}
               />
-              <div className="image-item__btn-wrapper">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onImageUpdate(index);
-                  }}
-                >
-                  Update
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onImageRemove(index)
-                  }}
-                >
-                  Remove
-                </button>
-              </div>
+
+              <button
+                style={{
+                  position: "absolute",
+                  top: "0",
+                  right: "0",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onImageRemove(index);
+                }}
+              > x </button>
             </div>
           ))}
         </div>

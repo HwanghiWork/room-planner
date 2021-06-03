@@ -227,7 +227,7 @@ const Room = () => {
             type="text"
             onChange={createRect}
           />
-          <input type="submit" value="Submit" />
+          <input type="submit" value="가구 추가" />
         </form>
       </div>
       <Imagebar dragUrl={dragUrl} />
