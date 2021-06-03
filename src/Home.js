@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useLayoutEffect, useState, useEffect } from "react";
 import "./App.css";
-import { Button, ButtonGroup, ToggleButton, Nav, Pagination } from "react-bootstrap";
+import { Button, ButtonGroup, ToggleButton, Nav } from "react-bootstrap";
 import Data from "./data.js";
 import Room from "./Room.js";
 import axios from 'axios';
