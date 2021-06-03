@@ -8,16 +8,15 @@ import {
   Rect,
 } from "react-konva";
 import useImage from "use-image";
-import RoomSize from "RoomSize";
+import RoomScale from "RoomScale";
 
 const URLImage = ({
   image,
-  index,
   isSelected,
   onSelect,
   offSelect,
   onChange,
-  rooms,
+  room
 }) => {
   const [roomImg] = useImage(image.src);
   const [pinImg] = useImage("images/pin.png");
@@ -40,9 +39,9 @@ const URLImage = ({
   };
 
   // set size of LocalStorage
-  if (rooms[index].width > 0 && roomImg) {
-    roomImg.width = rooms[index].width;
-    roomImg.height = rooms[index].height;
+  if (room.width > 0 && roomImg) {
+    roomImg.width = room.width;
+    roomImg.height = room.height;
   }
   return (
     <React.Fragment>
@@ -54,18 +53,19 @@ const URLImage = ({
         x={image.x}
         y={image.y}
         draggable={!pin}
-        // I will use offset to set origin to the center of the image
+        // Use offset to set origin to the center of the image
         offsetX={roomImg ? roomImg.width / 2 : 0}
         offsetY={roomImg ? roomImg.height / 2 : 0}
         onDragEnd={(e) => {
           const {
             attrs: { x, y },
           } = e.target;
-          onChange(e, {
+          onChange("dragend", {
             x: x,
             y: y,
             width: roomImg.width,
             height: roomImg.height,
+            src: room.src,
           });
         }}
         onTransformEnd={(e) => {
@@ -73,14 +73,16 @@ const URLImage = ({
           // and NOT its width or height
           // but in the store we have only width and height
           // to match the data better we will reset scale on transform end
+          const {
+            attrs: { x, y },
+          } = e.target;
           const node = imgRef.current;
-          const scaleX = node.scaleX();
-          const scaleY = node.scaleY();
-          onChange(e, {
-            x: node.x(),
-            y: node.y(),
-            width: Math.max(5, node.width() * scaleX),
-            height: Math.max(5, node.height() * scaleY),
+          onChange("transformend", {
+            x: x,
+            y: y,
+            width: Math.max(5, roomImg.width * node.scaleX()),
+            height: Math.max(5, roomImg.height * node.scaleY()),
+            src: room.src,
           });
           // we will reset it back
           node.scaleX(1);
@@ -89,13 +91,10 @@ const URLImage = ({
       />
       {isSelected && (
         <Transformer
-          ref={trRef}
-          boundBoxFunc={(oldBox, newBox) => {
-            // limit resize
-            if (newBox.width < 5 || newBox.height < 5) {
-              return oldBox;
-            }
-            return newBox;
+          ref = {trRef}
+          boundBoxFunc = {(oldBox, newBox) => {
+            if (newBox.width < 5 || newBox.height < 5) return oldBox;
+            else return newBox; 
           }}
         />
       )}
@@ -104,10 +103,8 @@ const URLImage = ({
         onTap={togglePin}
         image={pinImg}
         x={image.x}
-        y={image.y}
-        
-        // offset to set origin to the corner of the image
-        offsetX={roomImg ? -roomImg.width / 3 : 0}
+        y={image.y} 
+        offsetX={roomImg ? -roomImg.width / 2 : 0}
         offsetY={roomImg ? roomImg.height / 2 : 0}
         opacity={pin ? 1 : 0.5}
       />
@@ -120,7 +117,7 @@ const Room = () => {
   const stageRef = useRef();
   const didMount = useRef(false);
   /* Rooms Part */
-  const [rooms, setrooms] = useState(
+  const [rooms, setRooms] = useState(
     JSON.parse(localStorage.getItem("rooms")) || []
   );
   const [currentRoom, setCurrentRoom] = useState(0);
@@ -139,13 +136,9 @@ const Room = () => {
     group: 0,
   });
   const [selectedId, selectShape] = useState(null);
-  // this is a trigger for modal
-  const [show, setShow] = useState(false);
-  // this is a ruler for setting room size
-  const rulerSize = localStorage.getItem("rulerSize");
-  const [size, setSize] = useState(
-    rulerSize ? rulerSize : "0"
-  );
+  
+  // this is a scale that window width / real room's width
+  const [scale, setScale] = useState(1);
 
   let colorIndex = 0;
   const rainbow = [
@@ -159,24 +152,6 @@ const Room = () => {
   ];
 
   // Add event listener
-  function moveRoom(e, params) {
-    const { x, y, width, height } = params;
-    rooms[currentRoom].x = x;
-    rooms[currentRoom].y = y;
-    rooms[currentRoom].width = width;
-    rooms[currentRoom].height = height;
-    setrooms(rooms);
-    // Move rects together
-    for(let i=0; i < rects.length; i++) {
-      if(rects[i].group === currentRoom) {
-        rects[i].x = x;
-        rects[i].y = y;
-      }
-    }
-    setRects(rects.concat([]));
-    localStorage.setItem("rooms", JSON.stringify(rooms));
-  }
-
   function createRect(e) {
     e.preventDefault();
     let tmp = rect;
@@ -219,18 +194,8 @@ const Room = () => {
   };
 
   useEffect(() => {
-    if (didMount.current) {
-      setShow(true);
-      setCurrentRoom(rooms.length - 1);
-      localStorage.setItem("rooms", JSON.stringify(rooms));
-    } else {
-      didMount.current = true;
-    }
+    localStorage.setItem("rooms", JSON.stringify(rooms));
   }, [rooms]);
-
-  useEffect(() => {
-    localStorage.setItem("rulerSize", size);
-  }, [size]);
 
   useEffect(() => {
     localStorage.setItem(
@@ -241,11 +206,7 @@ const Room = () => {
 
   return (
     <>
-      <RoomSize
-        show={show}
-        setShow={setShow}
-        setSize={setSize}
-      />
+      <RoomScale scale={scale} setScale={setScale} />
       <div id={"buttons-wrapper"} >
         <button id="rooms" onClick={clearBoard}>
           Clear Image
@@ -276,7 +237,7 @@ const Room = () => {
           // register event position
           stageRef.current.setPointersPositions(e);
           // add image
-          setrooms(
+          setRooms(
             rooms.concat([
               {
                 ...stageRef.current.getPointerPosition(),
@@ -298,24 +259,42 @@ const Room = () => {
           onTouchStart={checkDeselect}
         >
           <Layer>
-            {rooms.map((image, i) => {
+            {rooms.map((image, roomId) => {
               return (
                 <URLImage
-                  key={i}
+                  key={roomId}
                   image={image}
-                  index={i}
-                  isSelected={i === selectedId}
+                  isSelected={selectedId === roomId}
                   onSelect={() => {
-                    setCurrentRoom(i);
-                    selectShape(i);
+                    setCurrentRoom(roomId);
+                    selectShape(roomId);
                   }}
-                  offSelect={() => {
-                    selectShape(null);
+                  offSelect={() => { selectShape(null); }}
+                  onChange={(event, params) => {
+                    const {x, y} = params;
+                    setCurrentRoom(roomId);
+                    switch(event) {
+                      case "dragend":
+                        rooms[roomId].x = x;
+                        rooms[roomId].y = y;
+                        break;
+                      case "transformend":
+                        rooms[roomId] = {...params};
+                        break;
+                    }
+                    setRooms(rooms.concat([]));
+                    
+                    if(rects) {
+                      for(let i=0; i < rects.length; i++) {
+                        if(roomId === rects[i].group) {
+                          rects[i].x = x;
+                          rects[i].y = y;
+                        }
+                      }
+                      setRects(rects.concat([]));
+                    }
                   }}
-                  onChange={(e, params) => {
-                    moveRoom(e, params);
-                  }}
-                  rooms={rooms}
+                  room={rooms[roomId]}
                 />
               );
             })}
@@ -325,8 +304,8 @@ const Room = () => {
                   key={"rect" + i}
                   x={rect.x + rect.offsetX}
                   y={rect.y + rect.offsetY}
-                  width={parseInt(rect.width)}
-                  height={parseInt(rect.height)}
+                  width={parseInt(rect.width) * scale}
+                  height={parseInt(rect.height) * scale}
                   opacity={0.6}
                   fill={rainbow[colorIndex++ % 7]}
                   draggable
