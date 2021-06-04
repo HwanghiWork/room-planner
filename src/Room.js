@@ -54,7 +54,7 @@ const URLImage = ({
         y={image.y}
         draggable={!pin}
         // Use offset to set origin to the center of the image
-        offsetX={roomImg ? roomImg.width / 2 : 0}
+        offsetX={roomImg ? roomImg.width / 2.5 : 0}
         offsetY={roomImg ? roomImg.height / 1.8 : 0}
         onDragEnd={(e) => {
           const {
@@ -152,14 +152,19 @@ const Room = () => {
   ];
 
   // Add event listener
-  function createRect(e) {
+  function typeRect(e) {
     e.preventDefault();
     let tmp = rect;
     tmp[e.target.name] = e.target.value;
     setRect(tmp);
   }
-
-  function addRect(e) {
+  const createRect = (w, h) => {
+    let tmp = rect;
+    tmp.width = w;
+    tmp.height = h;
+    setRect(tmp);
+  }
+  const addRect = (e) => {
     e.preventDefault();
     if (rooms) {
       rect.x = rooms[currentRoom].x;
@@ -219,15 +224,15 @@ const Room = () => {
           <input
             name="width"
             type="text"
-            onChange={createRect}
+            onChange={typeRect}
           />
           height:
           <input
             name="height"
             type="text"
-            onChange={createRect}
+            onChange={typeRect}
           />
-          <input type="submit" value="Submit" />
+          <input type="submit" value="가구 추가" />
         </form>
       </div>
       <Imagebar dragUrl={dragUrl} />
