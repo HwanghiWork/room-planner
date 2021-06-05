@@ -112,7 +112,7 @@ const URLImage = ({
   );
 };
 
-const Room = () => {
+const Room = (props) => {
   const dragUrl = useRef();
   const stageRef = useRef();
   const didMount = useRef(false);
@@ -211,7 +211,8 @@ const Room = () => {
 
   return (
     <>
-      <div className="d-flex" id={"buttons-wrapper"} >
+      <div className="d-flex flex-column" id={"buttons-wrapper"} >
+        <div className='d-flex'>
         <RoomScale scale={scale} setScale={setScale} />
         <button id="rooms" onClick={clearBoard}>
           Clear Image
@@ -219,14 +220,17 @@ const Room = () => {
         <button id="funitures" onClick={clearBoard}>
           Clear Rects
         </button>
-        <form className="ml-3" onSubmit={addRect}>
-          width:
+        </div>
+        <div className='d-flex'>
+        <form onSubmit={addRect}>
+          가로:
           <input
             name="width"
             type="text"
             onChange={typeRect}
           />
-          height:
+          <span className="mx-3" />
+          세로:
           <input
             name="height"
             type="text"
@@ -234,6 +238,7 @@ const Room = () => {
           />
           <input type="submit" value="가구 추가" />
         </form>
+        </div>
       </div>
       <Imagebar dragUrl={dragUrl} />
       <div
@@ -256,8 +261,8 @@ const Room = () => {
         onDragOver={(e) => e.preventDefault()}
       >
         <Stage
-          width={window.innerWidth}
-          height={window.innerHeight}
+          width={props.size[0] - 200}
+          height={props.size[1] - 300}
           style={{ border: "1px solid grey" }}
           ref={stageRef}
           onMouseDown={checkDeselect}

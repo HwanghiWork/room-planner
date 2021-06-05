@@ -6,15 +6,6 @@
   margin-left: 10px;
 }
 
-.가구추천 {
-  background-color: white;
-  width: 200px;
-  z-index: 100;
-  top:0;
-  right: 0;
-  flex: 2;
-}
-
 .가구추천추가 {
   margin-top: 10px;
   margin-bottom: 10px;
@@ -22,10 +13,10 @@
 
 .가구추천스크롤 {
   margin-top: 10px;
-  overflow-y: auto;
+  overflow-y: scroll;
   overflow-x: hidden;
   width: 100%;
-  height: 710px;
+  height: 100%;
 }
 
 .가구추천스크롤::-webkit-scrollbar {
