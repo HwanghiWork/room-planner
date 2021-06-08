@@ -1,19 +1,19 @@
-import React from "react";
-import ImageUploading from "react-images-uploading";
+import React from 'react';
+import ImageUploading from 'react-images-uploading';
 
 const Imagebar = (props) => {
   const [images, setImages] = React.useState(
     JSON.parse(localStorage.getItem('barImages')) || []
   );
   const maxNumber = 69;
-  const imagebarHeight = "150px";
+  const imagebarHeight = '150px';
   const onChange = (imageList, addUpdateIndex) => {
     // data for submit
     setImages(imageList);
   };
 
   React.useEffect(() => {
-    localStorage.setItem("barImages", JSON.stringify(images));
+    localStorage.setItem('barImages', JSON.stringify(images));
   }, [images]);
 
   return (
@@ -22,7 +22,7 @@ const Imagebar = (props) => {
       value={images}
       onChange={onChange}
       maxNumber={maxNumber}
-      dataURLKey="data_url"
+      dataURLKey='data_url'
     >
       {({
         imageList,
@@ -34,29 +34,29 @@ const Imagebar = (props) => {
         dragProps,
       }) => (
         <div
-          className="d-flex px-1"
+          className='d-flex px-1'
           onClick={onImageUpload}
           style={{
-            border: "1px solid black",
+            border: '1px solid black',
             paddingTop:
               images.length > 0 ? 0 : imagebarHeight,
             backgroundImage:
               images.length > 0
                 ? null
-                : `url("/images/empty.png")`,
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center",
-            backgroundSize: "fit",
-            opacity: images.length > 0 ? "1.0" : "0.6",
+                : `url('/images/empty.png')`,
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
+            backgroundSize: 'fit',
+            opacity: images.length > 0 ? '1.0' : '0.6',
           }}
           {...dragProps}
         >
           {imageList.map((image, index) => (
             <div key={index}
-              style={{ position: "relative" }}
-              className="image-item m-3">
+              style={{ position: 'relative' }}
+              className='image-item m-3'>
               <img
-                src={image["data_url"]}
+                src={image['data_url']}
                 width={imagebarHeight}
                 draggable
                 onDragStart={(e) => {
@@ -70,9 +70,9 @@ const Imagebar = (props) => {
 
               <button
                 style={{
-                  position: "absolute",
-                  top: "0",
-                  right: "0",
+                  position: 'absolute',
+                  top: '0',
+                  right: '0',
                 }}
                 onClick={(e) => {
                   e.stopPropagation();

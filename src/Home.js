@@ -2,16 +2,16 @@
 import React, {
   useLayoutEffect,
   useState,
-} from "react";
-import "./App.css";
+} from 'react';
+import './App.css';
 
-import Room from "Room.js";
-import FurnitureList from "FurnitureList.js";
+import Room from 'Room.js';
+import FurnitureList from 'FurnitureList.js';
 
 const Home = () => {
   return (
-    <div className="container-fluid d-flex p-0">
-      <div className="d-flex flex-column">
+    <div className='container-fluid d-flex p-0'>
+      <div className='d-flex flex-column'>
         <Room size={useWindowSize()} />
       </div>
       <FurnitureList size={useWindowSize()}/>
@@ -26,10 +26,10 @@ function useWindowSize() {
     function updateSize() {
       setSize([window.innerWidth, window.innerHeight]);
     }
-    window.addEventListener("resize", updateSize);
+    window.addEventListener('resize', updateSize);
     updateSize();
     return () =>
-      window.removeEventListener("resize", updateSize);
+      window.removeEventListener('resize', updateSize);
   }, []);
   return size;
 }

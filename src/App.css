@@ -48,10 +48,13 @@
 
 .page_wrap {
   text-align: center;
-  font-size: 0;
+  position: fixed;
+  bottom: 15px;
+  right: 10px;
 }
 .page_nation {
   display: inline-block;
+  margin-top: 5px; 
 }
 .page_nation .none {
   display: none;

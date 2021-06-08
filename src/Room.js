@@ -1,14 +1,14 @@
-import React, { useState, useRef, useEffect } from "react";
-import Imagebar from "Imagebar";
+import React, { useState, useRef, useEffect } from 'react';
+import Imagebar from 'Imagebar';
 import {
   Stage,
   Layer,
   Image,
   Transformer,
   Rect,
-} from "react-konva";
-import useImage from "use-image";
-import RoomScale from "RoomScale";
+} from 'react-konva';
+import useImage from 'use-image';
+import RoomScale from 'RoomScale';
 
 const URLImage = ({
   image,
@@ -16,10 +16,11 @@ const URLImage = ({
   onSelect,
   offSelect,
   onChange,
-  room
+  room,
+  rulerWidth,
 }) => {
   const [roomImg] = useImage(image.src);
-  const [pinImg] = useImage("images/pin.png");
+  const [pinImg] = useImage('images/pin.png');
   const [pin, setPin] = useState(false);
   const imgRef = useRef();
   const trRef = useRef();
@@ -33,8 +34,7 @@ const URLImage = ({
   }, [pin, isSelected]);
 
   const togglePin = () => {
-    if (!pin)
-      offSelect();
+    if (!pin) offSelect();
     setPin(!pin);
   };
 
@@ -42,6 +42,11 @@ const URLImage = ({
   if (room.width > 0 && roomImg) {
     roomImg.width = room.width;
     roomImg.height = room.height;
+  } else if (roomImg) {
+    // set Default
+    let initialScale = rulerWidth / roomImg.width;
+    roomImg.width = roomImg.width * initialScale;
+    roomImg.height = roomImg.height * initialScale;
   }
   return (
     <React.Fragment>
@@ -54,13 +59,13 @@ const URLImage = ({
         y={image.y}
         draggable={!pin}
         // Use offset to set origin to the center of the image
-        offsetX={roomImg ? roomImg.width / 2.5 : 0}
-        offsetY={roomImg ? roomImg.height / 1.8 : 0}
+        offsetX={roomImg ? roomImg.width / 2 : 0}
+        offsetY={roomImg ? roomImg.height / 2 : 0}
         onDragEnd={(e) => {
           const {
             attrs: { x, y },
           } = e.target;
-          onChange("dragend", {
+          onChange('dragend', {
             x: x,
             y: y,
             width: roomImg.width,
@@ -77,11 +82,17 @@ const URLImage = ({
             attrs: { x, y },
           } = e.target;
           const node = imgRef.current;
-          onChange("transformend", {
+          onChange('transformend', {
             x: x,
             y: y,
-            width: Math.max(5, roomImg.width * node.scaleX()),
-            height: Math.max(5, roomImg.height * node.scaleY()),
+            width: Math.max(
+              5,
+              roomImg.width * node.scaleX()
+            ),
+            height: Math.max(
+              5,
+              roomImg.height * node.scaleY()
+            ),
             src: room.src,
           });
           // we will reset it back
@@ -91,10 +102,11 @@ const URLImage = ({
       />
       {isSelected && (
         <Transformer
-          ref = {trRef}
-          boundBoxFunc = {(oldBox, newBox) => {
-            if (newBox.width < 5 || newBox.height < 5) return oldBox;
-            else return newBox; 
+          ref={trRef}
+          boundBoxFunc={(oldBox, newBox) => {
+            if (newBox.width < 5 || newBox.height < 5)
+              return oldBox;
+            else return newBox;
           }}
         />
       )}
@@ -103,9 +115,9 @@ const URLImage = ({
         onTap={togglePin}
         image={pinImg}
         x={image.x}
-        y={image.y} 
-        offsetX={roomImg ? -roomImg.width / 2 : 0}
-        offsetY={roomImg ? roomImg.height / 2 : 0}
+        y={image.y}
+        offsetX={roomImg ? -roomImg.width / 2.8 : 0}
+        offsetY={roomImg ? roomImg.height / 2.2 : 0}
         opacity={pin ? 1 : 0.5}
       />
     </React.Fragment>
@@ -115,16 +127,13 @@ const URLImage = ({
 const Room = (props) => {
   const dragUrl = useRef();
   const stageRef = useRef();
-  const didMount = useRef(false);
   /* Rooms Part */
   const [rooms, setRooms] = useState(
-    JSON.parse(localStorage.getItem("rooms")) || []
+    JSON.parse(localStorage.getItem('rooms')) || []
   );
   const [currentRoom, setCurrentRoom] = useState(0);
-  /* Funitures Part */
-  const [rects, setRects] = useState(
-    JSON.parse(localStorage.getItem("funitures")) || []
-  );
+  /* furnitures Part */
+  const [rects, setRects] = useState(JSON.parse(localStorage.getItem('furnitures')) || []);
   const [rect, setRect] = useState({
     id: 0,
     x: 0,
@@ -136,19 +145,22 @@ const Room = (props) => {
     group: 0,
   });
   const [selectedId, selectShape] = useState(null);
-  
-  // this is a scale that window width / real room's width
+
+  // this is a scale that (window's width) / (actually room's width)
   const [scale, setScale] = useState(1);
+  const [rulerWidth, setRulerWidth] = useState(
+    window.innerWidth * 0.6
+  );
 
   let colorIndex = 0;
   const rainbow = [
-    "red",
-    "orange",
-    "yellow",
-    "green",
-    "blue",
-    "navy",
-    "purple",
+    'red',
+    'orange',
+    'yellow',
+    'green',
+    'blue',
+    'navy',
+    'purple',
   ];
 
   // Add event listener
@@ -158,22 +170,20 @@ const Room = (props) => {
     tmp[e.target.name] = e.target.value;
     setRect(tmp);
   }
-  const createRect = (w, h) => {
-    let tmp = rect;
-    tmp.width = w;
-    tmp.height = h;
-    setRect(tmp);
-  }
+
   const addRect = (e) => {
     e.preventDefault();
     if (rooms) {
       rect.x = rooms[currentRoom].x;
       rect.y = rooms[currentRoom].y;
       rect.group = currentRoom;
-      rect.id = rects.length;
-      setRects(rects.concat([{ ...rect }]));
+      rect.id =
+        rects.length > 0
+          ? rects[rects.length - 1].id + 1
+          : 0;
+      setRects(rects.concat(rect));
     }
-  }
+  };
 
   function moveRect(e, i) {
     const { x, y } = e.target.attrs;
@@ -187,7 +197,16 @@ const Room = (props) => {
       target: { id },
     } = e;
     localStorage.removeItem(id);
-    window.location.reload();
+    switch (id) {
+      case 'rooms':
+        setRooms([]);
+        break;
+      case 'furnitures':
+        setRects([]);
+        localStorage.setItem('checkButtons', JSON.stringify([]));
+        window.location.reload();
+        break;
+    }
   }
 
   const checkDeselect = (e) => {
@@ -199,45 +218,65 @@ const Room = (props) => {
   };
 
   useEffect(() => {
-    localStorage.setItem("rooms", JSON.stringify(rooms));
+    const localScale = JSON.parse(
+      localStorage.getItem('scale')
+    );
+    if (localScale) 
+      setScale(localScale)
+    else
+      setScale(1);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('rooms', JSON.stringify(rooms));
   }, [rooms]);
 
   useEffect(() => {
     localStorage.setItem(
-      "funitures",
+      'furnitures',
       JSON.stringify(rects)
     );
   }, [rects]);
 
+  useEffect(() => {
+    localStorage.setItem('scale', JSON.stringify(scale));
+  }, [scale]);
   return (
     <>
-      <div className="d-flex flex-column" id={"buttons-wrapper"} >
+      <div
+        className='d-flex flex-column'
+        id={'buttons-wrapper'}
+      >
         <div className='d-flex'>
-        <RoomScale scale={scale} setScale={setScale} />
-        <button id="rooms" onClick={clearBoard}>
-          Clear Image
-        </button>
-        <button id="funitures" onClick={clearBoard}>
-          Clear Rects
-        </button>
+          <RoomScale
+            scale={scale}
+            setScale={setScale}
+            rulerWidth={rulerWidth}
+          />
+          <button id='rooms' onClick={clearBoard}>
+            Clear Image
+          </button>
+          <button id='furnitures' onClick={clearBoard}>
+            Clear Rects
+          </button>
         </div>
         <div className='d-flex'>
-        <form onSubmit={addRect}>
-          가로:
-          <input
-            name="width"
-            type="text"
-            onChange={typeRect}
-          />
-          <span className="mx-3" />
-          세로:
-          <input
-            name="height"
-            type="text"
-            onChange={typeRect}
-          />
-          <input type="submit" value="가구 추가" />
-        </form>
+          <form onSubmit={addRect}>
+            가로:
+            <input
+              name='width'
+              type='text'
+              onChange={typeRect}
+            />
+            <span className='mx-3' />
+            세로:
+            <input
+              name='height'
+              type='text'
+              onChange={typeRect}
+            />
+            <input type='submit' value='가구 추가' />
+          </form>
         </div>
       </div>
       <Imagebar dragUrl={dragUrl} />
@@ -262,8 +301,8 @@ const Room = (props) => {
       >
         <Stage
           width={props.size[0] - 200}
-          height={props.size[1] - 300}
-          style={{ border: "1px solid grey" }}
+          height={props.size[1]}
+          style={{ border: '1px solid grey' }}
           ref={stageRef}
           onMouseDown={checkDeselect}
           onTouchStart={checkDeselect}
@@ -279,24 +318,30 @@ const Room = (props) => {
                     setCurrentRoom(roomId);
                     selectShape(roomId);
                   }}
-                  offSelect={() => { selectShape(null); }}
+                  offSelect={() => {
+                    selectShape(null);
+                  }}
                   onChange={(event, params) => {
-                    const {x, y} = params;
+                    const { x, y } = params;
                     setCurrentRoom(roomId);
-                    switch(event) {
-                      case "dragend":
+                    switch (event) {
+                      case 'dragend':
                         rooms[roomId].x = x;
                         rooms[roomId].y = y;
                         break;
-                      case "transformend":
-                        rooms[roomId] = {...params};
+                      case 'transformend':
+                        rooms[roomId] = { ...params };
                         break;
                     }
                     setRooms(rooms.concat([]));
-                    
-                    if(rects) {
-                      for(let i=0; i < rects.length; i++) {
-                        if(roomId === rects[i].group) {
+
+                    if (rects) {
+                      for (
+                        let i = 0;
+                        i < rects.length;
+                        i++
+                      ) {
+                        if (roomId === rects[i].group) {
                           rects[i].x = x;
                           rects[i].y = y;
                         }
@@ -305,30 +350,32 @@ const Room = (props) => {
                     }
                   }}
                   room={rooms[roomId]}
+                  rulerWidth={rulerWidth}
                 />
               );
             })}
-            {rects.map((rect, i) => {
-              return (
-                <Rect
-                  key={"rect" + i}
-                  x={rect.x + rect.offsetX}
-                  y={rect.y + rect.offsetY}
-                  width={parseInt(rect.width) * scale}
-                  height={parseInt(rect.height) * scale}
-                  opacity={0.6}
-                  fill={rainbow[colorIndex++ % 7]}
-                  draggable
-                  onDragEnd={(e) => moveRect(e, rect.id)}
-                />
-              );
-            })}
+            {rects &&
+              rects.map((item, i) => {
+                return (
+                  <Rect
+                    key={'rect' + item.id}
+                    x={item.x + item.offsetX}
+                    y={item.y + item.offsetY}
+                    width={parseInt(item.width) * scale}
+                    height={parseInt(item.height) * scale}
+                    opacity={0.6}
+                    fill={rainbow[colorIndex++ % 7]}
+                    draggable
+                    onDragEnd={(e) => moveRect(e, item.id)}
+                  />
+                );
+              })}
             <Rect
               x={window.innerWidth * 0.1}
               y={50}
-              width={window.innerWidth * 0.6}
+              width={rulerWidth}
               height={8}
-              fill="red"
+              fill='red'
               opacity={0.4}
             />
           </Layer>
@@ -337,5 +384,7 @@ const Room = (props) => {
     </>
   );
 };
-
+export function refreshBoard() {
+  window.location.reload();
+}
 export default Room;
