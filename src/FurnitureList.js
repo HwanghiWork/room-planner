@@ -68,9 +68,8 @@ const FurnitureList = (props) => {
       <Nav fill variant='tabs' defaultActiveKey='link-1'>
         {menu.map((name, i) => {
           return (
-            <Nav.Item>
+            <Nav.Item key={'category' + i}>
               <Nav.Link
-                key={'category' + i}
                 eventKey={'link-' + i}
                 onClick={(e) => {
                   가구종류변경(category[i]);
@@ -87,8 +86,8 @@ const FurnitureList = (props) => {
           return (
             <Furniture
               key={'f' + i}
-              가구={furnitureInfo}
               id={'f' + i}
+              가구={furnitureInfo}
               checkButtons={checkButtons}
               setCheckButtons={setCheckButtons}
             />
@@ -132,15 +131,17 @@ const Furniture = (props) => {
   } = props;
 
   const [checked, setChecked] = useState(checkButtons.find(fid => fid === id ? true : false));
-  const [rects, setRects] = useState([]);
-  const [rect, setRect] = useState({
+  const rect = {
     id: -1,
     x: 100,
     y: 100,
-    offsetX: 0,
-    offsetY: 0,
+    dx: 0,
+    dy: 0,
+    width: 0,
+    height: 0,
+    rotation:0,
     group: 0,
-  });
+  };
 
   return (
     <div className='가구'>
@@ -163,6 +164,7 @@ const Furniture = (props) => {
           key={'b' + id}
           type='checkbox'
           variant='secondary'
+          style={ {'opacity': !checked ? '0.6' : '1'}}
           checked={checked}
           onChange={(e) => {
             setChecked(e.target.checked);
@@ -182,7 +184,6 @@ const Furniture = (props) => {
                 'furnitures',
                 JSON.stringify(rects.concat(newRect))
               );
-              setRects(rects.concat(newRect));
               setCheckButtons(checkButtons.concat([id]));
             } else {
               setCheckButtons(
