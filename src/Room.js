@@ -6,6 +6,7 @@ import {
   Image,
   Transformer,
   Rect,
+  Text,
 } from "react-konva";
 import useImage from "use-image";
 import RoomScale from "RoomScale";
@@ -126,6 +127,7 @@ const URLImage = ({
 
 const RectFurniture = ({
   id,
+  name,
   x, y, dx, dy,
   width, height,
   opacity,
@@ -151,10 +153,8 @@ const RectFurniture = ({
         key={id}
         x={x}
         y={y}
-        dy={dy}
-        dx={dx}
-        offsetX={width / 2}
-        offsetY={height / 2}
+        offsetX={width/2}
+        offsetY={height/2}
         ref={rectRef}
         width={width}
         height={height}
@@ -165,10 +165,10 @@ const RectFurniture = ({
         onDragEnd={onDragEnd}
         onTransformEnd={(e) => {
           // Remember rotation
-          const node = rectRef.current;
           onChange(e.target.attrs.rotation);
         }}
       />
+      <Text text={name} x={x - (width/2)} y={y - (height/2)} />
       {isSelected && (
         <Transformer
           ref={trRef}
@@ -194,6 +194,7 @@ const Room = (props) => {
   );
   const [rect, setRect] = useState({
     id: 0,
+    name: "",
     x: 0,
     y: 0,
     dx: 0,
@@ -240,6 +241,7 @@ const Room = (props) => {
         rects.length > 0
           ? rects[rects.length - 1].id + 1
           : 0;
+      rect.name = "사용자 정의 " + rect.id;
       setRects(rects.concat(rect));
     }
   };
@@ -421,6 +423,7 @@ const Room = (props) => {
                   <RectFurniture
                     key={"rect" + item.id}
                     id={"rect" + item.id}
+                    name={item.name}
                     x={rooms[item.group].x + item.dx}
                     y={rooms[item.group].y + item.dy}
                     dx={item.dx}

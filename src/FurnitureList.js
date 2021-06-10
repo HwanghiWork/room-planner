@@ -133,6 +133,7 @@ const Furniture = (props) => {
   const [checked, setChecked] = useState(checkButtons.find(fid => fid === id ? true : false));
   const rect = {
     id: -1,
+    name: "",
     x: 100,
     y: 100,
     dx: 0,
@@ -177,6 +178,7 @@ const Furniture = (props) => {
               let newRect = {
                 ...lastRect,
                 id: lastRect.id + 1,
+                name: title,
                 width: width,
                 height: height,
               };
