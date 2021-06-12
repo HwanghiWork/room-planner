@@ -28,8 +28,7 @@ const FurnitureList = (props) => {
     const baseUrl = "https://rudwl1005a.github.io/";
     axios
       .get(
-        `${baseUrl}${categoryName}/${categoryName}data${toPageNum + 1
-        }.json`
+        `${baseUrl}${categoryName}/${categoryName}data${toPageNum + 1}.json`
       )
       .then((result) => {
         가구변경([...result.data]);
