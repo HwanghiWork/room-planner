@@ -338,7 +338,7 @@ const Room = (props) => {
               onChange={typeRect}
               className="왼쪽마진2"
             />
-            <input type="submit" value="가구 추가" />
+            <input type="submit" value="가구 추가" className="왼쪽마진" />
             <span className="mx-3">
               1 mm:{" "}
               {Number.parseFloat(scale).toFixed(3) +
