@@ -15,12 +15,12 @@ const Auth = () => {
     const {
       target: { name, value },
     } = event;
-
     if (name === "email") {
       setEmail(value);
     } else if (name === "password") {
       setPassword(value);
     }
+    console.log(name, value);
   };
   const onSubmit = async (event) => {
     event.preventDefault();

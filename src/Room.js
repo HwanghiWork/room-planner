@@ -208,9 +208,7 @@ const Room = (props) => {
 
   // this is a scale that (window's width) / (actually room's width)
   const [scale, setScale] = useState(1);
-  const [rulerWidth, setRulerWidth] = useState(
-    window.innerWidth * 0.5
-  );
+  const [rulerWidth, setRulerWidth] = useState(300);
 
   let colorIndex = 0;
   const rainbow = [
@@ -445,7 +443,7 @@ const Room = (props) => {
                 );
               })}
             <Rect
-              x={window.innerWidth * 0.1}
+              x={100}
               y={50}
               width={rulerWidth}
               height={8}

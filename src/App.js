@@ -27,7 +27,6 @@ function App() {
         <button
           onClick={() => {
             setIsLoggedIn(false);
-            setUserObject({});
           }}
         >
           로그아웃
