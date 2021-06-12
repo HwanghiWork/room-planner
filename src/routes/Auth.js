@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { authService, firebaseInstance } from "fbase";
 import "App.css";
+import {
+  FormControl,
+  Button
+} from "react-bootstrap";
+
+
 
 const Auth = () => {
   const [error, setError] = useState("");
