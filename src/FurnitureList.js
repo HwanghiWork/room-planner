@@ -64,7 +64,7 @@ const FurnitureList = (props) => {
         height: windowHeight + 'px',
       }}
     >
-      <Nav fill variant='tabs' defaultActiveKey='link-1'>
+      <Nav fill variant='tabs' defaultActiveKey='link-0'>
         {menu.map((name, i) => {
           return (
             <Nav.Item key={'category' + i}>
