@@ -314,12 +314,12 @@ const Room = (props) => {
             setScale={setScale}
             rulerWidth={rulerWidth}
           />
-          <button id="rooms" onClick={clearBoard}>
+          <Button className="m-1" variant="outline-info" id="rooms" onClick={clearBoard}>
             도면 이미지 삭제
-          </button>
-          <button id="furnitures" onClick={clearBoard}>
+          </Button>
+          <Button className="m-1" variant="outline-info" id="furnitures" onClick={clearBoard}>
             사용자 추가 가구 삭제
-          </button>
+          </Button>
         </div>
         <div className="d-flex" className="왼쪽마진 아래마진">
           <form onSubmit={addRect}>
