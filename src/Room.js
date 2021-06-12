@@ -8,6 +8,7 @@ import {
   Rect,
   Text,
 } from "react-konva";
+import { Button } from 'react-bootstrap';
 import useImage from "use-image";
 import RoomScale from "RoomScale";
 
@@ -153,8 +154,8 @@ const RectFurniture = ({
         key={id}
         x={x}
         y={y}
-        offsetX={width/2}
-        offsetY={height/2}
+        offsetX={width / 2}
+        offsetY={height / 2}
         ref={rectRef}
         width={width}
         height={height}
@@ -168,7 +169,7 @@ const RectFurniture = ({
           onChange(e.target.attrs.rotation);
         }}
       />
-      <Text text={name} x={x - (width/2)} y={y - (height/2)} />
+      <Text text={name} x={x - (width / 2)} y={y - (height / 2)} />
       {isSelected && (
         <Transformer
           ref={trRef}
@@ -200,7 +201,7 @@ const Room = (props) => {
     dy: 0,
     width: 0,
     height: 0,
-    rotation:0,
+    rotation: 0,
     group: 0,
   };
   const [selectedId, selectShape] = useState(null);
@@ -246,8 +247,8 @@ const Room = (props) => {
 
   function moveRect(e, i) {
     const { x, y } = e.target.attrs;
-    rects[i].dx = x - rooms[currentRoom].x ;
-    rects[i].dy = y - rooms[currentRoom].y ;
+    rects[i].dx = x - rooms[currentRoom].x;
+    rects[i].dy = y - rooms[currentRoom].y;
     setRects(rects.concat([]));
   }
 
@@ -312,20 +313,21 @@ const Room = (props) => {
             setScale={setScale}
             rulerWidth={rulerWidth}
           />
-          <button id="rooms" onClick={clearBoard}>
+          <Button variant="outline-info" className="m-1" id="rooms" onClick={clearBoard}>
             Clear Image
-          </button>
-          <button id="furnitures" onClick={clearBoard}>
+          </Button>
+          <Button variant="outline-info" className="m-1" id="furnitures" onClick={clearBoard}>
             Clear Rects
-          </button>
+          </Button>
         </div>
-        <div className="d-flex">
+        <div className="d-flex" className="왼쪽마진 아래마진">
           <form onSubmit={addRect}>
             가로:
             <input
               name="width"
               type="text"
               onChange={typeRect}
+              className="왼쪽마진2"
             />
             <span className="mx-3" />
             세로:
@@ -333,9 +335,10 @@ const Room = (props) => {
               name="height"
               type="text"
               onChange={typeRect}
+              className="왼쪽마진2"
             />
-            <input type="submit" value="가구 추가" />
-            <span className="mx-3">1 mm: {Number.parseFloat(scale).toFixed(3) +' pixel'}</span>
+            <input type="submit" value="가구 추가" className="왼쪽마진" />
+            <span className="mx-3">1 mm: {Number.parseFloat(scale).toFixed(3) + ' pixel'}</span>
           </form>
         </div>
       </div>
@@ -360,7 +363,7 @@ const Room = (props) => {
         onDragOver={(e) => e.preventDefault()}
       >
         <Stage
-          width={props.size[0] - 200}
+          width={props.size[0] - 300}
           height={props.size[1]}
           style={{ border: "1px solid grey" }}
           ref={stageRef}

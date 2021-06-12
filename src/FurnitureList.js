@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useState, useEffect } from "react";
 import "App.css";
-import { ButtonGroup, ToggleButton } from "react-bootstrap";
+import { ButtonGroup, ToggleButton, Button } from "react-bootstrap";
 import { Nav } from "react-bootstrap";
 import axios from "axios";
 import { refreshBoard } from "Room";
@@ -28,8 +28,7 @@ const FurnitureList = (props) => {
     const baseUrl = "https://rudwl1005a.github.io/";
     axios
       .get(
-        `${baseUrl}${categoryName}/${categoryName}data${
-          toPageNum + 1
+        `${baseUrl}${categoryName}/${categoryName}data${toPageNum + 1
         }.json`
       )
       .then((result) => {
@@ -59,9 +58,11 @@ const FurnitureList = (props) => {
     <div
       className="가구추천"
       style={{
-        width: "20%",
-        minWidth: "200px",
-        height: windowHeight + "px",
+
+        width: '20%',
+        minWidth: '300px',
+        height: windowHeight + 'px',
+        marginTop: '35px'
       }}
     >
       <Nav fill variant="tabs" defaultActiveKey="link-0">
@@ -95,18 +96,18 @@ const FurnitureList = (props) => {
                 rects.length > 0
                   ? rects[rects.length - 1]
                   : {
-                      id: -1,
-                      name: "",
-                      x: 100,
-                      y: 100,
-                      dx: 0,
-                      dy: 0,
-                      width: 0,
-                      height: 0,
-                      rotation: 0,
-                      group: 0,
-                      checkButtonId: "",
-                    }
+                    id: -1,
+                    name: "",
+                    x: 100,
+                    y: 100,
+                    dx: 0,
+                    dy: 0,
+                    width: 0,
+                    height: 0,
+                    rotation: 0,
+                    group: 0,
+                    checkButtonId: "",
+                  }
               }
               rects={rects}
               setRects={setRects}
@@ -114,15 +115,11 @@ const FurnitureList = (props) => {
           );
         })}
       </div>
-      <div
-        className="page_wrap d-flex flex-column"
-        style={{
-          backgroundColor: "white",
-          zIndex: "100",
-        }}
-      >
-        <button onClick={refreshBoard}>가구 그리기</button>
-        <div className="page_nation">
+
+      <div className='page_wrap d-flex flex-column'
+        style={{ "background-color": "white" }}>
+
+        <div className='page_nation'>
           {[...Array(5)].map((n, i) => {
             return (
               <a
@@ -170,7 +167,6 @@ const Furniture = (props) => {
       fid === checkButtonId ? true : false
     )
   );
-
   return (
     <div className="가구">
       <img
