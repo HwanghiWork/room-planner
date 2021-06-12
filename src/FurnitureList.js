@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useState, useEffect } from "react";
 import "App.css";
-import { ButtonGroup, ToggleButton } from "react-bootstrap";
+import { ButtonGroup, ToggleButton, Button } from "react-bootstrap";
 import { Nav } from "react-bootstrap";
 import axios from "axios";
 
@@ -28,9 +28,7 @@ const FurnitureList = (props) => {
     const baseUrl = "https://rudwl1005a.github.io/";
     axios
       .get(
-        `${baseUrl}${categoryName}/${categoryName}data${
-          toPageNum + 1
-        }.json`
+        `${baseUrl}${categoryName}/${categoryName}data${toPageNum + 1}.json`
       )
       .then((result) => {
         가구변경([...result.data]);
@@ -59,9 +57,11 @@ const FurnitureList = (props) => {
     <div
       className="가구추천"
       style={{
-        width: "20%",
-        minWidth: "200px",
-        height: windowHeight + "px",
+
+        width: '20%',
+        minWidth: '300px',
+        height: windowHeight + 'px',
+        marginTop: '35px'
       }}
     >
       <Nav fill variant="tabs" defaultActiveKey="link-0">
@@ -157,7 +157,6 @@ const Furniture = (props) => {
       fid === checkButtonId ? true : false
     )
   );
-
   return (
     <div className="가구">
       <img

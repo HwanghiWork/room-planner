@@ -8,6 +8,7 @@ import {
   Rect,
   Text,
 } from "react-konva";
+import { Button } from 'react-bootstrap';
 import useImage from "use-image";
 import RoomScale from "RoomScale";
 
@@ -320,13 +321,14 @@ const Room = (props) => {
             사용자 추가 가구 삭제
           </button>
         </div>
-        <div className="d-flex">
+        <div className="d-flex" className="왼쪽마진 아래마진">
           <form onSubmit={addRect}>
             가로:
             <input
               name="width"
               type="text"
               onChange={typeRect}
+              className="왼쪽마진2"
             />
             <span className="mx-3" />
             세로:
@@ -334,6 +336,7 @@ const Room = (props) => {
               name="height"
               type="text"
               onChange={typeRect}
+              className="왼쪽마진2"
             />
             <input type="submit" value="가구 추가" />
             <span className="mx-3">
@@ -365,7 +368,7 @@ const Room = (props) => {
         onDragOver={(e) => e.preventDefault()}
       >
         <Stage
-          width={props.size[0] - 200}
+          width={props.size[0] - 300}
           height={props.size[1]}
           style={{ border: "1px solid grey" }}
           ref={stageRef}
