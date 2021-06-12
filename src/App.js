@@ -1,68 +1,49 @@
 /* eslint-disable */
 
-import React from 'react';
-import "./App.css";
-import {
-  Navbar,
-  Nav,
-  NavDropdown
-} from "react-bootstrap";
-import { Link, Route, Switch } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import AppRouter from "Router";
+import { authService } from "fbase";
 
-import Home from "Home.js";
-import Login from "Login.js";
-import Signin from "Signin.js";
+function App() {
+  const [init, setInit] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userObj, setUserObject] = useState(null);
+  useEffect(() => {
+    authService.onAuthStateChanged((user) => {
+      console.log(user);
+      if (user) {
+        setIsLoggedIn(true);
+        setUserObject(user);
+      } else {
+        setIsLoggedIn(false);
+      }
+      setInit(true);
+    });
+  }, []);
 
-const App = () => {
   return (
-    <div className="App">
-      <Navbar
-        className="header mb-3"
-        bg="light"
-        expand="lg"
-      >
-        <Navbar.Brand href="#home">
-          2D인테리어 (Open Web Project)
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mr-auto">
-            <Nav.Link as={Link} to="/"> Home </Nav.Link>
-            <Nav.Link as={Link} to="/login"> Login </Nav.Link>
-            <NavDropdown
-              title="Dropdown"
-              id="basic-nav-dropdown"
-            >
-              <NavDropdown.Item as={Link} to="/scroll">
-                Action
-              </NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.2">
-                Another action
-              </NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">
-                Something
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="#action/3.4">
-                Separated link
-              </NavDropdown.Item>
-            </NavDropdown>
-          </Nav>
-        </Navbar.Collapse>
-      </Navbar>
-      <Switch>
-        <Route exact path="/">
-          <Home />
-        </Route>
-        <Route path="/login">
-          <Login />
-        </Route>
-        <Route path="/signin">
-          <Signin />
-        </Route>
-      </Switch>
-    </div>
+    <>
+      {isLoggedIn && (
+        <button
+          onClick={() => {
+            setIsLoggedIn(false);
+            setUserObject({});
+          }}
+        >
+          로그아웃
+        </button>
+      )}
+      {init ? (
+        <AppRouter
+          isLoggedIn={isLoggedIn}
+          setIsLoggedIn={setIsLoggedIn}
+          userObj={userObj}
+        />
+      ) : (
+        "Initializing..."
+      )}
+    </>
   );
-};
+}
 
 export default App;

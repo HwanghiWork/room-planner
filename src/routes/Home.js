@@ -3,7 +3,7 @@ import React, {
   useLayoutEffect,
   useState,
 } from 'react';
-import './App.css';
+import 'App.css';
 
 import Room from 'Room.js';
 import FurnitureList from 'FurnitureList.js';

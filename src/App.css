@@ -1,4 +1,4 @@
-.App {
+.가구 {
   text-align: center;
 }
 
@@ -48,9 +48,11 @@
 
 .page_wrap {
   text-align: center;
+  padding: 15px;
   position: fixed;
-  bottom: 15px;
-  right: 10px;
+  width: 200px;
+  bottom: 0px;
+  right: 0px;
 }
 .page_nation {
   display: inline-block;

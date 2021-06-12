@@ -1,12 +1,11 @@
 /* eslint-disable */
 import React, { useState, useEffect } from 'react';
-import './App.css';
+import 'App.css';
 import {
   ButtonGroup,
   ToggleButton
 } from 'react-bootstrap';
 import { Nav } from 'react-bootstrap';
-import Data from 'data.js';
 import axios from 'axios';
 import {refreshBoard} from 'Room';
 
@@ -15,7 +14,7 @@ const menu = ['침대', '옷장', '책상', '서랍장'];
 
 const FurnitureList = (props) => {
   const [windowWidth, windowHeight] = props.size;
-  let [가구, 가구변경] = useState(Data);
+  let [가구, 가구변경] = useState([]);
   const [가구종류, 가구종류변경] = useState(category[0]); // 0 = 침대, 1 = 옷장, 2 = 책상, 3 = 서랍장
   const [pages, setPages] = useState([]);
   const [checkButtons, setCheckButtons] = useState(JSON.parse(localStorage.getItem('checkButtons')) || []);
@@ -94,7 +93,8 @@ const FurnitureList = (props) => {
           );
         })}
       </div>
-      <div className='page_wrap d-flex flex-column'>
+      <div className='page_wrap d-flex flex-column'
+        style={{"background-color":"white"}}>
         <button onClick={refreshBoard}>
         선택한 가구 추가하기
         </button>

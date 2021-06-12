@@ -209,7 +209,7 @@ const Room = (props) => {
   // this is a scale that (window's width) / (actually room's width)
   const [scale, setScale] = useState(1);
   const [rulerWidth, setRulerWidth] = useState(
-    window.innerWidth * 0.6
+    window.innerWidth * 0.5
   );
 
   let colorIndex = 0;
@@ -417,7 +417,7 @@ const Room = (props) => {
                 />
               );
             })}
-            {rects &&
+            {rects && rooms &&
               rects.map((item, i) => {
                 return (
                   <RectFurniture
