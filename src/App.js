@@ -25,7 +25,7 @@ function App() {
   return (
     <>
       {isLoggedIn && (
-        <Button variant="outline-info" className="m-1"
+        <Button variant="outline-info" className="logout m-1"
           onClick={() => {
             
             authService.signOut().then(() => {

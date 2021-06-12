@@ -308,12 +308,17 @@ const Room = (props) => {
         className="d-flex flex-column"
         id={"buttons-wrapper"}
       >
-        <div className="d-flex">
+        <div className="d-flex align-content-center">
           <RoomScale
             scale={scale}
             setScale={setScale}
             rulerWidth={rulerWidth}
           />
+          <span className="m-2">
+              1 mm:{" "}
+              {Number.parseFloat(scale).toFixed(3) +
+                " pixel"}
+            </span>
           <Button className="m-1" variant="outline-info" id="rooms" onClick={clearBoard}>
             도면 이미지 삭제
           </Button>
@@ -339,11 +344,7 @@ const Room = (props) => {
               className="왼쪽마진2"
             />
             <input type="submit" value="가구 추가" className="왼쪽마진" />
-            <span className="mx-3">
-              1 mm:{" "}
-              {Number.parseFloat(scale).toFixed(3) +
-                " pixel"}
-            </span>
+            
           </form>
         </div>
       </div>
