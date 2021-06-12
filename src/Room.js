@@ -189,10 +189,9 @@ const Room = (props) => {
   );
   const [currentRoom, setCurrentRoom] = useState(0);
   /* furnitures Part */
-  const [rects, setRects] = useState(
-    JSON.parse(localStorage.getItem("furnitures")) || []
-  );
-  const [rect, setRect] = useState({
+  const rects = props.rects;
+  const setRects = props.setRects;
+  let rect = {
     id: 0,
     name: "",
     x: 0,
@@ -203,12 +202,12 @@ const Room = (props) => {
     height: 0,
     rotation:0,
     group: 0,
-  });
+  };
   const [selectedId, selectShape] = useState(null);
-
+  const [customSize, setCustomSize] = useState({width:0, height:0});
   // this is a scale that (window's width) / (actually room's width)
   const [scale, setScale] = useState(1);
-  const [rulerWidth, setRulerWidth] = useState(300);
+  const [rulerWidth, setRulerWidth] = useState(450);
 
   let colorIndex = 0;
   const rainbow = [
@@ -224,9 +223,8 @@ const Room = (props) => {
   // Add event listener
   function typeRect(e) {
     e.preventDefault();
-    let tmp = rect;
-    tmp[e.target.name] = e.target.value;
-    setRect(tmp);
+    customSize[e.target.name] = e.target.value;
+    setCustomSize(customSize)
   }
 
   const addRect = (e) => {
@@ -234,6 +232,8 @@ const Room = (props) => {
     if (rooms) {
       rect.x = rooms[currentRoom].x;
       rect.y = rooms[currentRoom].y;
+      rect.width = customSize.width;
+      rect.height = customSize.height;
       rect.group = currentRoom;
       rect.id =
         rects.length > 0
@@ -266,7 +266,6 @@ const Room = (props) => {
           "checkButtons",
           JSON.stringify([])
         );
-        window.location.reload();
         break;
     }
   }
@@ -397,11 +396,7 @@ const Room = (props) => {
                     setRooms(rooms.concat([]));
 
                     if (rects) {
-                      for (
-                        let i = 0;
-                        i < rects.length;
-                        i++
-                      ) {
+                      for (let i = 0; i < rects.length; i++) {
                         if (roomId === rects[i].group) {
                           rects[i].x = x;
                           rects[i].y = y;

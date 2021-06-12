@@ -9,12 +9,13 @@ import Room from 'Room.js';
 import FurnitureList from 'FurnitureList.js';
 
 const Home = () => {
+  const [rects, setRects] = useState(JSON.parse(localStorage.getItem("furnitures")) || []);
   return (
     <div className='container-fluid d-flex p-0'>
       <div className='d-flex flex-column'>
-        <Room size={useWindowSize()} />
+        <Room size={useWindowSize()} rects={rects} setRects={setRects} />
       </div>
-      <FurnitureList size={useWindowSize()}/>
+      <FurnitureList size={useWindowSize()} rects={rects} setRects={setRects}/>
     </div>
   );
 };
