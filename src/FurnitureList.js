@@ -3,11 +3,12 @@ import React, { useState, useEffect } from 'react';
 import 'App.css';
 import {
   ButtonGroup,
-  ToggleButton
+  ToggleButton,
+  Button
 } from 'react-bootstrap';
 import { Nav } from 'react-bootstrap';
 import axios from 'axios';
-import {refreshBoard} from 'Room';
+import { refreshBoard } from 'Room';
 
 const category = ['bed', 'closet', 'desk', 'drawer'];
 const menu = ['침대', '옷장', '책상', '서랍장'];
@@ -28,8 +29,7 @@ const FurnitureList = (props) => {
     const baseUrl = 'https://rudwl1005a.github.io/';
     axios
       .get(
-        `${baseUrl}${categoryName}/${categoryName}data${
-          toPageNum + 1
+        `${baseUrl}${categoryName}/${categoryName}data${toPageNum + 1
         }.json`
       )
       .then((result) => {
@@ -60,8 +60,9 @@ const FurnitureList = (props) => {
       className='가구추천'
       style={{
         width: '20%',
-        minWidth: '200px',
+        minWidth: '300px',
         height: windowHeight + 'px',
+        marginTop: '35px'
       }}
     >
       <Nav fill variant='tabs' defaultActiveKey='link-0'>
@@ -94,10 +95,10 @@ const FurnitureList = (props) => {
         })}
       </div>
       <div className='page_wrap d-flex flex-column'
-        style={{"background-color":"white"}}>
-        <button onClick={refreshBoard}>
-        선택한 가구 추가하기
-        </button>
+        style={{ "background-color": "white" }}>
+        <Button variant="info" onClick={refreshBoard}>
+          선택한 가구 추가하기
+        </Button>
         <div className='page_nation'>
           {[...Array(5)].map((n, i) => {
             return (
@@ -115,7 +116,7 @@ const FurnitureList = (props) => {
           })}
         </div>
       </div>
-      
+
     </div>
   );
 };
@@ -140,7 +141,7 @@ const Furniture = (props) => {
     dy: 0,
     width: 0,
     height: 0,
-    rotation:0,
+    rotation: 0,
     group: 0,
   };
 
@@ -165,7 +166,7 @@ const Furniture = (props) => {
           key={'b' + id}
           type='checkbox'
           variant='secondary'
-          style={ {'opacity': !checked ? '0.6' : '1'}}
+          style={{ 'opacity': !checked ? '0.6' : '1' }}
           checked={checked}
           onChange={(e) => {
             setChecked(e.target.checked);
@@ -191,7 +192,7 @@ const Furniture = (props) => {
               setCheckButtons(
                 checkButtons.filter((fid) => {
                   return fid !== id;
-              }));
+                }));
               localStorage.setItem(
                 'furnitures',
                 JSON.stringify(rects.filter((rid) => {

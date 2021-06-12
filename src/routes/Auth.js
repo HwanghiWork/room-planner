@@ -3,7 +3,8 @@ import { authService, firebaseInstance } from "fbase";
 import "App.css";
 import {
   InputGroup,
-  FormControl
+  FormControl,
+  Button
 } from "react-bootstrap";
 
 const Auth = () => {
@@ -58,8 +59,8 @@ const Auth = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={onSubmit}>
+    <div className="로그인">
+      {/* {<form onSubmit={onSubmit}>
         <InputGroup className="mb-3">
           <InputGroup.Prepend>
             <InputGroup.Text
@@ -106,11 +107,12 @@ const Auth = () => {
           value={"로그인"}
         />
         </div>
-      </form>
-      <div>
-        <button onClick={onSocialClick} name="google">
-          Continue with Google
-        </button>
+      </form>} */}
+      <img src={process.env.PUBLIC_URL + '/images/Logo.PNG'} />
+      <div className="가운데정렬 위쪽마진">
+        <Button variant="outline-info" onClick={onSocialClick} name="google" >
+          Login with Google
+        </Button>
       </div>
     </div>
   );

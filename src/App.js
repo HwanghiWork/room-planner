@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import AppRouter from "Router";
 import { authService } from "fbase";
+import { Button } from 'react-bootstrap';
 
 function App() {
   const [init, setInit] = useState(false);
@@ -24,13 +25,13 @@ function App() {
   return (
     <>
       {isLoggedIn && (
-        <button
+        <Button variant="outline-info" className="m-1"
           onClick={() => {
             setIsLoggedIn(false);
           }}
         >
           로그아웃
-        </button>
+        </Button>
       )}
       {init ? (
         <AppRouter
