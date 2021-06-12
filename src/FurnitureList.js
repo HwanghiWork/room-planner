@@ -4,13 +4,13 @@ import "App.css";
 import { ButtonGroup, ToggleButton } from "react-bootstrap";
 import { Nav } from "react-bootstrap";
 import axios from "axios";
-import { refreshBoard } from "Room";
 
 const category = ["bed", "closet", "desk", "drawer"];
 const menu = ["침대", "옷장", "책상", "서랍장"];
 
 const FurnitureList = (props) => {
   const [windowWidth, windowHeight] = props.size;
+  const rect = props.rect;
   const rects = props.rects;
   const setRects = props.setRects;
 
@@ -94,19 +94,7 @@ const FurnitureList = (props) => {
               lastRect={
                 rects.length > 0
                   ? rects[rects.length - 1]
-                  : {
-                      id: -1,
-                      name: "",
-                      x: 100,
-                      y: 100,
-                      dx: 0,
-                      dy: 0,
-                      width: 0,
-                      height: 0,
-                      rotation: 0,
-                      group: 0,
-                      checkButtonId: "",
-                    }
+                  : rect
               }
               rects={rects}
               setRects={setRects}
@@ -121,7 +109,6 @@ const FurnitureList = (props) => {
           zIndex: "100",
         }}
       >
-        <button onClick={refreshBoard}>가구 그리기</button>
         <div className="page_nation">
           {[...Array(5)].map((n, i) => {
             return (
@@ -190,6 +177,7 @@ const Furniture = (props) => {
       <ButtonGroup toggle className="mb-2">
         <ToggleButton
           key={checkButtonId}
+          id ={checkButtonId}
           type="checkbox"
           variant="secondary"
           style={{ opacity: !checked ? "0.6" : "1" }}
@@ -223,7 +211,7 @@ const Furniture = (props) => {
                 return (
                   checkButtonId !== rect.checkButtonId
                 );
-              })
+              });
               setRects(newRects);
               localStorage.setItem(
                 "furnitures",

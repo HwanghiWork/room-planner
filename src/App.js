@@ -26,7 +26,14 @@ function App() {
       {isLoggedIn && (
         <button
           onClick={() => {
-            setIsLoggedIn(false);
+            
+            authService.signOut().then(() => {
+              // Sign-out successful.
+              setIsLoggedIn(false);
+            }).catch((error) => {
+              // An error happened.
+              console.log(error);
+            });
           }}
         >
           로그아웃

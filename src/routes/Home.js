@@ -10,12 +10,25 @@ import FurnitureList from 'FurnitureList.js';
 
 const Home = () => {
   const [rects, setRects] = useState(JSON.parse(localStorage.getItem("furnitures")) || []);
+  let rect = {
+    id: -1,
+    name: "",
+    x: 100,
+    y: 100,
+    dx: 0,
+    dy: 0,
+    width: 0,
+    height: 0,
+    rotation: 0,
+    group: 0,
+    checkButtonId: "",
+  }
   return (
     <div className='container-fluid d-flex p-0'>
       <div className='d-flex flex-column'>
-        <Room size={useWindowSize()} rects={rects} setRects={setRects} />
+        <Room size={useWindowSize()} rect={rect} rects={rects} setRects={setRects} />
       </div>
-      <FurnitureList size={useWindowSize()} rects={rects} setRects={setRects}/>
+      <FurnitureList size={useWindowSize()} rect={rect} rects={rects} setRects={setRects}/>
     </div>
   );
 };

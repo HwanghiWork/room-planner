@@ -128,13 +128,14 @@ const URLImage = ({
 const RectFurniture = ({
   id,
   name,
-  x, y, dx, dy,
-  width, height,
+  x,
+  y,
+  width,
+  height,
   opacity,
   fill,
   rotation,
   isSelected,
-  draggable,
   onDragEnd,
   onChange,
 }) => {
@@ -149,26 +150,34 @@ const RectFurniture = ({
   }, [isSelected]);
   return (
     <React.Fragment>
+      <Text
+        text={name}
+        x={x - width / 2}
+        y={y - height / 2}
+        width={width}
+        height={height}
+        verticalAlign={'middle'}
+        onChange={(e) => e.target.attrs.rotation}
+      />
       <Rect
         key={id}
         x={x}
         y={y}
-        offsetX={width/2}
-        offsetY={height/2}
+        offsetX={width / 2}
+        offsetY={height / 2}
         ref={rectRef}
         width={width}
         height={height}
         opacity={opacity}
         rotation={rotation}
         fill={fill}
-        draggable={draggable}
+        draggable
         onDragEnd={onDragEnd}
         onTransformEnd={(e) => {
           // Remember rotation
           onChange(e.target.attrs.rotation);
         }}
       />
-      <Text text={name} x={x - (width/2)} y={y - (height/2)} />
       {isSelected && (
         <Transformer
           ref={trRef}
@@ -189,22 +198,14 @@ const Room = (props) => {
   );
   const [currentRoom, setCurrentRoom] = useState(0);
   /* furnitures Part */
+  let rect = props.rect;
   const rects = props.rects;
   const setRects = props.setRects;
-  let rect = {
-    id: 0,
-    name: "",
-    x: 0,
-    y: 0,
-    dx: 0,
-    dy: 0,
+  const [selectedId, selectShape] = useState(null);
+  const [customSize, setCustomSize] = useState({
     width: 0,
     height: 0,
-    rotation:0,
-    group: 0,
-  };
-  const [selectedId, selectShape] = useState(null);
-  const [customSize, setCustomSize] = useState({width:0, height:0});
+  });
   // this is a scale that (window's width) / (actually room's width)
   const [scale, setScale] = useState(1);
   const [rulerWidth, setRulerWidth] = useState(450);
@@ -224,7 +225,7 @@ const Room = (props) => {
   function typeRect(e) {
     e.preventDefault();
     customSize[e.target.name] = e.target.value;
-    setCustomSize(customSize)
+    setCustomSize(customSize);
   }
 
   const addRect = (e) => {
@@ -246,8 +247,8 @@ const Room = (props) => {
 
   function moveRect(e, i) {
     const { x, y } = e.target.attrs;
-    rects[i].dx = x - rooms[currentRoom].x ;
-    rects[i].dy = y - rooms[currentRoom].y ;
+    rects[i].dx = x - rooms[currentRoom].x;
+    rects[i].dy = y - rooms[currentRoom].y;
     setRects(rects.concat([]));
   }
 
@@ -261,10 +262,10 @@ const Room = (props) => {
         setRooms([]);
         break;
       case "furnitures":
-        setRects([]);
-        localStorage.setItem(
-          "checkButtons",
-          JSON.stringify([])
+        setRects(
+          rects.filter((ritem) => {
+            return ritem.checkButtonId !== "";
+          })
         );
         break;
     }
@@ -313,10 +314,10 @@ const Room = (props) => {
             rulerWidth={rulerWidth}
           />
           <button id="rooms" onClick={clearBoard}>
-            Clear Image
+            도면 이미지 삭제
           </button>
           <button id="furnitures" onClick={clearBoard}>
-            Clear Rects
+            사용자 추가 가구 삭제
           </button>
         </div>
         <div className="d-flex">
@@ -335,7 +336,11 @@ const Room = (props) => {
               onChange={typeRect}
             />
             <input type="submit" value="가구 추가" />
-            <span className="mx-3">1 mm: {Number.parseFloat(scale).toFixed(3) +' pixel'}</span>
+            <span className="mx-3">
+              1 mm:{" "}
+              {Number.parseFloat(scale).toFixed(3) +
+                " pixel"}
+            </span>
           </form>
         </div>
       </div>
@@ -396,7 +401,11 @@ const Room = (props) => {
                     setRooms(rooms.concat([]));
 
                     if (rects) {
-                      for (let i = 0; i < rects.length; i++) {
+                      for (
+                        let i = 0;
+                        i < rects.length;
+                        i++
+                      ) {
                         if (roomId === rects[i].group) {
                           rects[i].x = x;
                           rects[i].y = y;
@@ -410,7 +419,8 @@ const Room = (props) => {
                 />
               );
             })}
-            {rects && rooms &&
+            {rects.length > 0 &&
+              rooms.length > 0 &&
               rects.map((item, i) => {
                 return (
                   <RectFurniture
@@ -419,11 +429,9 @@ const Room = (props) => {
                     name={item.name}
                     x={rooms[item.group].x + item.dx}
                     y={rooms[item.group].y + item.dy}
-                    dx={item.dx}
-                    dy={item.dy}
                     width={parseInt(item.width) * scale}
                     height={parseInt(item.height) * scale}
-                    opacity={0.6}
+                    opacity={0.4}
                     fill={rainbow[colorIndex++ % 7]}
                     rotation={item.rotation}
                     draggable={true}
@@ -451,7 +459,5 @@ const Room = (props) => {
     </>
   );
 };
-export function refreshBoard() {
-  window.location.reload();
-}
+
 export default Room;
