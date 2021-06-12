@@ -61,7 +61,7 @@ const FurnitureList = (props) => {
         width: '20%',
         minWidth: '300px',
         height: windowHeight + 'px',
-        marginTop: '35px'
+        marginTop: '78px'
       }}
     >
       <Nav fill variant="tabs" defaultActiveKey="link-0">
@@ -176,7 +176,7 @@ const Furniture = (props) => {
       <ButtonGroup toggle className="mb-2">
         <ToggleButton
           key={checkButtonId}
-          id ={checkButtonId}
+          id={checkButtonId}
           type="checkbox"
           variant="secondary"
           style={{ opacity: !checked ? "0.6" : "1" }}
