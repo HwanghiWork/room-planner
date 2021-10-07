@@ -6,7 +6,9 @@ import {
   Image,
   Transformer,
   Rect,
+  Text,
 } from "react-konva";
+import { Button } from 'react-bootstrap';
 import useImage from "use-image";
 import RoomScale from "RoomScale";
 
@@ -16,7 +18,8 @@ const URLImage = ({
   onSelect,
   offSelect,
   onChange,
-  room
+  room,
+  rulerWidth,
 }) => {
   const [roomImg] = useImage(image.src);
   const [pinImg] = useImage("images/pin.png");
@@ -33,8 +36,7 @@ const URLImage = ({
   }, [pin, isSelected]);
 
   const togglePin = () => {
-    if (!pin)
-      offSelect();
+    if (!pin) offSelect();
     setPin(!pin);
   };
 
@@ -42,6 +44,11 @@ const URLImage = ({
   if (room.width > 0 && roomImg) {
     roomImg.width = room.width;
     roomImg.height = room.height;
+  } else if (room.width <= 0 && roomImg) {
+    // set initial value
+    let initialScale = rulerWidth / roomImg.width;
+    roomImg.width = roomImg.width * initialScale;
+    roomImg.height = roomImg.height * initialScale;
   }
   return (
     <React.Fragment>
@@ -80,8 +87,14 @@ const URLImage = ({
           onChange("transformend", {
             x: x,
             y: y,
-            width: Math.max(5, roomImg.width * node.scaleX()),
-            height: Math.max(5, roomImg.height * node.scaleY()),
+            width: Math.max(
+              5,
+              roomImg.width * node.scaleX()
+            ),
+            height: Math.max(
+              5,
+              roomImg.height * node.scaleY()
+            ),
             src: room.src,
           });
           // we will reset it back
@@ -91,10 +104,11 @@ const URLImage = ({
       />
       {isSelected && (
         <Transformer
-          ref = {trRef}
-          boundBoxFunc = {(oldBox, newBox) => {
-            if (newBox.width < 5 || newBox.height < 5) return oldBox;
-            else return newBox; 
+          ref={trRef}
+          boundBoxFunc={(oldBox, newBox) => {
+            if (newBox.width < 5 || newBox.height < 5)
+              return oldBox;
+            else return newBox;
           }}
         />
       )}
@@ -103,42 +117,99 @@ const URLImage = ({
         onTap={togglePin}
         image={pinImg}
         x={image.x}
-        y={image.y} 
-        offsetX={roomImg ? -roomImg.width / 2 : 0}
-        offsetY={roomImg ? roomImg.height / 2 : 0}
+        y={image.y}
+        offsetX={roomImg ? -roomImg.width / 2.8 : 0}
+        offsetY={roomImg ? roomImg.height / 2.2 : 0}
         opacity={pin ? 1 : 0.5}
       />
     </React.Fragment>
   );
 };
 
-const Room = () => {
+const RectFurniture = ({
+  id,
+  name,
+  x,
+  y,
+  width,
+  height,
+  opacity,
+  fill,
+  rotation,
+  isSelected,
+  onDragEnd,
+  onChange,
+}) => {
+  const rectRef = useRef();
+  const trRef = useRef();
+  useEffect(() => {
+    if (isSelected) {
+      // we need to attach transformer manually
+      trRef.current.nodes([rectRef.current]);
+      trRef.current.getLayer().batchDraw();
+    }
+  }, [isSelected]);
+  return (
+    <React.Fragment>
+      <Text
+        text={name}
+        x={x - width / 2}
+        y={y - height / 2}
+        width={width}
+        height={height}
+        verticalAlign={'middle'}
+        onChange={(e) => e.target.attrs.rotation}
+      />
+      <Rect
+        key={id}
+        x={x}
+        y={y}
+        offsetX={width / 2}
+        offsetY={height / 2}
+        ref={rectRef}
+        width={width}
+        height={height}
+        opacity={opacity}
+        rotation={rotation}
+        fill={fill}
+        draggable
+        onDragEnd={onDragEnd}
+        onTransformEnd={(e) => {
+          // Remember rotation
+          onChange(e.target.attrs.rotation);
+        }}
+      />
+      {isSelected && (
+        <Transformer
+          ref={trRef}
+          centeredScaling={true}
+          rotationSnaps={[0, 90, 180, 270]}
+          resizeEnabled={false}
+        />
+      )}
+    </React.Fragment>
+  );
+};
+const Room = (props) => {
   const dragUrl = useRef();
   const stageRef = useRef();
-  const didMount = useRef(false);
   /* Rooms Part */
   const [rooms, setRooms] = useState(
     JSON.parse(localStorage.getItem("rooms")) || []
   );
   const [currentRoom, setCurrentRoom] = useState(0);
-  /* Funitures Part */
-  const [rects, setRects] = useState(
-    JSON.parse(localStorage.getItem("funitures")) || []
-  );
-  const [rect, setRect] = useState({
-    id: 0,
-    x: 0,
-    y: 0,
-    offsetX: 0,
-    offsetY: 0,
+  /* furnitures Part */
+  let rect = props.rect;
+  const rects = props.rects;
+  const setRects = props.setRects;
+  const [selectedId, selectShape] = useState(null);
+  const [customSize, setCustomSize] = useState({
     width: 0,
     height: 0,
-    group: 0,
   });
-  const [selectedId, selectShape] = useState(null);
-  
-  // this is a scale that window width / real room's width
+  // this is a scale that (window's width) / (actually room's width)
   const [scale, setScale] = useState(1);
+  const [rulerWidth, setRulerWidth] = useState(450);
 
   let colorIndex = 0;
   const rainbow = [
@@ -152,28 +223,33 @@ const Room = () => {
   ];
 
   // Add event listener
-  function createRect(e) {
+  function typeRect(e) {
     e.preventDefault();
-    let tmp = rect;
-    tmp[e.target.name] = e.target.value;
-    setRect(tmp);
+    customSize[e.target.name] = e.target.value;
+    setCustomSize(customSize);
   }
 
-  function addRect(e) {
+  const addRect = (e) => {
     e.preventDefault();
     if (rooms) {
       rect.x = rooms[currentRoom].x;
       rect.y = rooms[currentRoom].y;
+      rect.width = customSize.width;
+      rect.height = customSize.height;
       rect.group = currentRoom;
-      rect.id = rects.length;
-      setRects(rects.concat([{ ...rect }]));
+      rect.id =
+        rects.length > 0
+          ? rects[rects.length - 1].id + 1
+          : 0;
+      rect.name = "사용자 정의 " + rect.id;
+      setRects(rects.concat(rect));
     }
-  }
+  };
 
   function moveRect(e, i) {
     const { x, y } = e.target.attrs;
-    rects[i].offsetX = x - rects[i].x;
-    rects[i].offsetY = y - rects[i].y;
+    rects[i].dx = x - rooms[currentRoom].x;
+    rects[i].dy = y - rooms[currentRoom].y;
     setRects(rects.concat([]));
   }
 
@@ -182,7 +258,18 @@ const Room = () => {
       target: { id },
     } = e;
     localStorage.removeItem(id);
-    window.location.reload();
+    switch (id) {
+      case "rooms":
+        setRooms([]);
+        break;
+      case "furnitures":
+        setRects(
+          rects.filter((ritem) => {
+            return ritem.checkButtonId !== "";
+          })
+        );
+        break;
+    }
   }
 
   const checkDeselect = (e) => {
@@ -194,41 +281,72 @@ const Room = () => {
   };
 
   useEffect(() => {
+    const localScale = JSON.parse(
+      localStorage.getItem("scale")
+    );
+    if (localScale) setScale(localScale);
+    else setScale(1);
+  }, []);
+
+  useEffect(() => {
     localStorage.setItem("rooms", JSON.stringify(rooms));
   }, [rooms]);
 
   useEffect(() => {
     localStorage.setItem(
-      "funitures",
+      "furnitures",
       JSON.stringify(rects)
     );
   }, [rects]);
 
+  useEffect(() => {
+    localStorage.setItem("scale", JSON.stringify(scale));
+  }, [scale]);
   return (
     <>
-      <RoomScale scale={scale} setScale={setScale} />
-      <div id={"buttons-wrapper"} >
-        <button id="rooms" onClick={clearBoard}>
-          Clear Image
-        </button>
-        <button id="funitures" onClick={clearBoard}>
-          Clear Rects
-        </button>
-        <form onSubmit={addRect}>
-          width:
-          <input
-            name="width"
-            type="text"
-            onChange={createRect}
+      <div
+        className="d-flex flex-column"
+        id={"buttons-wrapper"}
+      >
+        <div className="d-flex align-content-center">
+          <RoomScale
+            scale={scale}
+            setScale={setScale}
+            rulerWidth={rulerWidth}
           />
-          height:
-          <input
-            name="height"
-            type="text"
-            onChange={createRect}
-          />
-          <input type="submit" value="가구 추가" />
-        </form>
+          <span className="m-2">
+              1 mm:{" "}
+              {Number.parseFloat(scale).toFixed(3) +
+                " pixel"}
+            </span>
+          <Button className="m-1" variant="outline-info" id="rooms" onClick={clearBoard}>
+            도면 이미지 삭제
+          </Button>
+          <Button className="m-1" variant="outline-info" id="furnitures" onClick={clearBoard}>
+            사용자 추가 가구 삭제
+          </Button>
+        </div>
+        <div className="d-flex" className="왼쪽마진 아래마진">
+          <form onSubmit={addRect}>
+            가로:
+            <input
+              name="width"
+              type="text"
+              onChange={typeRect}
+              className="왼쪽마진2"
+            />
+            <span className="mx-3" />
+            세로:
+            <input
+              name="height"
+              type="text"
+              onChange={typeRect}
+              className="왼쪽마진2"
+            />
+            <input type="submit" value="가구 추가" className="왼쪽마진" />
+            
+          </form>
+        </div>
       </div>
       <Imagebar dragUrl={dragUrl} />
       <div
@@ -251,8 +369,8 @@ const Room = () => {
         onDragOver={(e) => e.preventDefault()}
       >
         <Stage
-          width={window.innerWidth}
-          height={window.innerHeight}
+          width={props.size[0] - 300}
+          height={props.size[1]}
           style={{ border: "1px solid grey" }}
           ref={stageRef}
           onMouseDown={checkDeselect}
@@ -269,24 +387,30 @@ const Room = () => {
                     setCurrentRoom(roomId);
                     selectShape(roomId);
                   }}
-                  offSelect={() => { selectShape(null); }}
+                  offSelect={() => {
+                    selectShape(null);
+                  }}
                   onChange={(event, params) => {
-                    const {x, y} = params;
+                    const { x, y } = params;
                     setCurrentRoom(roomId);
-                    switch(event) {
+                    switch (event) {
                       case "dragend":
                         rooms[roomId].x = x;
                         rooms[roomId].y = y;
                         break;
                       case "transformend":
-                        rooms[roomId] = {...params};
+                        rooms[roomId] = { ...params };
                         break;
                     }
                     setRooms(rooms.concat([]));
-                    
-                    if(rects) {
-                      for(let i=0; i < rects.length; i++) {
-                        if(roomId === rects[i].group) {
+
+                    if (rects) {
+                      for (
+                        let i = 0;
+                        i < rects.length;
+                        i++
+                      ) {
+                        if (roomId === rects[i].group) {
                           rects[i].x = x;
                           rects[i].y = y;
                         }
@@ -295,28 +419,40 @@ const Room = () => {
                     }
                   }}
                   room={rooms[roomId]}
+                  rulerWidth={rulerWidth}
                 />
               );
             })}
-            {rects.map((rect, i) => {
-              return (
-                <Rect
-                  key={"rect" + i}
-                  x={rect.x + rect.offsetX}
-                  y={rect.y + rect.offsetY}
-                  width={parseInt(rect.width) * scale}
-                  height={parseInt(rect.height) * scale}
-                  opacity={0.6}
-                  fill={rainbow[colorIndex++ % 7]}
-                  draggable
-                  onDragEnd={(e) => moveRect(e, rect.id)}
-                />
-              );
-            })}
+            {rects.length > 0 &&
+              rooms.length > 0 &&
+              rects.map((item, i) => {
+                return (
+                  <RectFurniture
+                    key={"rect" + item.id}
+                    id={"rect" + item.id}
+                    name={item.name}
+                    x={rooms[item.group].x + item.dx}
+                    y={rooms[item.group].y + item.dy}
+                    width={parseInt(item.width) * scale}
+                    height={parseInt(item.height) * scale}
+                    opacity={0.4}
+                    fill={rainbow[colorIndex++ % 7]}
+                    rotation={item.rotation}
+                    draggable={true}
+                    isSelected={true}
+                    onDragEnd={(e) => moveRect(e, item.id)}
+                    onChange={(rotation) => {
+                      item.rotation = rotation;
+                      rects[i] = item;
+                      setRects(rects.concat([]));
+                    }}
+                  />
+                );
+              })}
             <Rect
-              x={window.innerWidth * 0.2}
+              x={100}
               y={50}
-              width={window.innerWidth * 0.6}
+              width={rulerWidth}
               height={8}
               fill="red"
               opacity={0.4}

@@ -1,0 +1,113 @@
+.logout {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.가구 {
+  text-align: center;
+}
+
+.왼쪽마진 {
+  margin-left: 10px;
+}
+
+.왼쪽마진2 {
+  margin-left: 2px;
+}
+
+.아래마진 {
+  margin-bottom: 2px;
+}
+
+.위쪽마진 {
+  margin-top: 10px;
+}
+
+.가운데정렬 {
+  text-align: center;
+  display: block;
+  justify-content: center;
+  align-items: center;
+}
+
+.가구추천추가 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.가구추천스크롤 {
+  margin-top: 10px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+.가구추천스크롤::-webkit-scrollbar {
+  display: none;
+}
+
+.가구추천이미지 {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.가구추천텍스트 {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.로그인 {
+  position: absolute;
+  /* top: 50%;
+  left: 50%;
+  margin-top: -100px;
+  margin-left: -200px;
+  width: 400px;
+  height: 200px; */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.page_wrap {
+  text-align: center;
+  padding: 15px;
+  position: fixed;
+  width: 295px;
+  bottom: 0px;
+  right: 0px;
+  align-items: center;
+  justify-content: center;
+}
+.page_nation {
+  display: inline-block;
+  margin-top: 5px;
+}
+.page_nation .none {
+  display: none;
+}
+.page_nation a {
+  display: block;
+  margin: 0 3px;
+  float: left;
+  border: 1px solid #e6e6e6;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  text-align: center;
+  background-color: #fff;
+  font-size: 13px;
+  color: #999999;
+  text-decoration: none;
+}
+
+.page_nation a.active {
+  background-color: #42454c;
+  color: #fff;
+  border: 1px solid #42454c;
+}
+
+.가구 {
+  margin-bottom: 10px;
+}
